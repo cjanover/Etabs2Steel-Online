@@ -5,3 +5,4 @@ class Publisher
   def self.publish(exchange, message = {})
 
   end
+end
