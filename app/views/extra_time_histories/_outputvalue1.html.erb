@@ -1,0 +1,28 @@
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Output Value</th>
+				<th>Select</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Steel X Direction</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "1")%></td>
+			</tr>
+			<tr>
+				<td>Steel Y Direction</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "2")%></td>
+			</tr>
+			<tr>
+				<td>Beam Rotation</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "3")%></td>
+			</tr>
+			<tr>
+				<td>Column Rotation</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "4")%></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

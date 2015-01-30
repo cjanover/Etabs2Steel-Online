@@ -1,0 +1,2 @@
+module LoadOptionsHelper
+end

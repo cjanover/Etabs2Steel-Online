@@ -1,0 +1,86 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_analysis_option_path(@analysis_option.id) %>
+	<% next_path = convergence_option_path(current_default.convergence_option.id)%>
+	<% prev_path = model_information_path(current_default.model_information.id)%>
+	
+<% else %>
+	<% edit_path = edit_model_analysis_default_analysis_option_path(current_model.id, current_analysis.id, current_default.id, @analysis_option.id) %>
+	<% next_path = model_analysis_default_convergence_option_path(current_model.id, current_analysis.id, current_default.id, current_default.convergence_option.id) %>
+	<% prev_path = model_analysis_default_model_information_path(current_model.id, current_analysis.id, current_default.id, current_default.model_information.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Analysis Options</h3>
+			<div class="field">
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Toggle to turn on Flexible Panel Zones (2), Rigid Panel Zones (1), or Fixed Panel Zones (0) - Fixed Panel Zones are automatically applied at restrained nodes" %>">
+					<p>Panel Zone Rigidity: <%= @analysis_option.panel_zone_rigidity %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Maximum number of turning points in hysteretic model. Use atleast 20" %>">
+					<p>Maximum Number of Turning Points in Hysteretic Model (MTP): <%= @analysis_option.mtp %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Maximum number of turning point locations (Use atleast 100000)" %>">
+					<p>Maximum Number of Turning Point Locations (NDIM): <%= @analysis_option.ndim %></p>
+				</span>
+				<p>Number of Static Steps (NSS): <%= @analysis_option.nss %></p>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "0 = Central Difference, 0.25 = Constant Average, 0.166 = Linear Average" %>">
+					<p>Newmark Integration Parameter (Beta): <%= @analysis_option.beta %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "0.5 for Central Difference, Constant Average, and Linear Average" %>">
+					<p>Newmark Integration Parameter (Gamma): <%= @analysis_option.gamma %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Mass Proportional Damping Coefficient; [C] = A0[M] + A1[K]" %>">
+					<p>Rayleigh Damping Parameter (A0): <%= @analysis_option.a0 %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Period of the first mode of the structure. If left blank program assumes T = 0.1*N where N is the number of stories" %>">
+					<p>Assumed Period of First Mode: <%= @analysis_option.first_mode_period %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Stiffness proportional Rayleigh damping value. Used to calculate A1 in the equation [C] = A0[M] + A1[K] via A1 = 2*Csi_k/w_1 where w_1 is inputted above. Assumed to be 0.005 when using special columns to model damping." %>">
+					<p>Stiffness Proportional Rayleigh Damping Value: <%= @analysis_option.damping_ratio_stiffness %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Damping ratio for columns; used to calculate A2" %>">
+					<p>Column Damping Ratio: <%= @analysis_option.damping_ratio_column %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Percent of values used to calculate A2 = Fraction*R*Drift*Wn/(2*eta_n_c) (Default is 0.1)" %>">
+					<p>Percent of Base Shear used for Damping: <%= @analysis_option.base_shear_percent %></p>
+				</span>
+				<p>Assumed Pushover Base Shear: <%= @analysis_option.base_shear %></p>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Ratio between F_push and F_eq_des (F_push/F_eq_des) Must run pushover analyes to determine ratio. 2.5 seems to be a reasonable answer" %>">
+					<p>Ratio between F_push and F_eq_des: <%= @analysis_option.r %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Drift of the base floor, should use ETABS model to determine quanitity (Default is 1/400*Story_Height)" %>">
+					<p>Assumed Drift of Base Floor: <%= @analysis_option.base_drift %></p>
+				</span>
+				<p>Dynamic Time Step (DT): <%= @analysis_option.dt %></p>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Output interval for response time histories on unit 8 (1 means every step, 2 means every other)" %>">
+					<p>Output interval for Time Histories (IRINT): <%= @analysis_option.irint %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Toggle to also output response time histories to unit 4 (1 = yes, 0 = no)" %>">
+					<p>Additional Time History Output Toggle (IROUT): <%= @analysis_option.irout %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "ISTOP time step at which current dynamic analysis ends (If empty then defaults NDS)" %>">
+					<p>Time Step where Dynamic Analysis Ends (ISTOP): <%= @analysis_option.istop %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Level of debug information. 0 = Only Errors, 1 = Element Creation, 2 = Parsing Info, 3 = All Debug Info" %>">
+					<p>Debug Level (DEBUGLEVEL): <%= @analysis_option.debuglevel %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Toggle to enable or disbale output of section conversion table (yes or no)" %>">
+					<p>Generate Section Conversion File (SECTIONCONVERSION): <%= @analysis_option.sectionconversion %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Toggle to enable or disable output of material conversion table (yes or no)" %>">
+					<p>Generate Material Conversion File (MATCONVERSION): <%= @analysis_option.matconversion %></p>
+				</span>
+
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			<%= button_to "Previous", prev_path, :method => :get%>
+			<%= button_to "Next", next_path, :method => :get%>
+		</div>
+	</div> 
+</div>

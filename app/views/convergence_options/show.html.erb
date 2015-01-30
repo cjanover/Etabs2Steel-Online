@@ -1,0 +1,38 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_convergence_option_path(@convergence_option.id) %>
+	<% prev_path = analysis_option_path(current_default.analysis_option.id)%>
+	<% next_path = fiber_option_path(current_default.fiber_option.id)%>
+<% else %>
+	<% edit_path = edit_model_analysis_default_convergence_option_path(current_model.id, current_analysis.id, current_default.id, @convergence_option.id) %>
+	<% prev_path = model_analysis_default_analysis_option_path(current_model.id, current_analysis.id, current_default.id, current_default.analysis_option.id) %>
+	<% next_path = model_analysis_default_fiber_option_path(current_model.id, current_analysis.id, current_default.id, current_default.fiber_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Convergence Options</h3>
+			<div class="field">
+				<p>Maximum number of global iterations (MIG): <%= @convergence_option.mig %></p>
+				<p>Force Tolerance for Global Iterations (TOL1): <%= @convergence_option.tol1 %></p>
+				<p>Moment Tolerance for Global Iterations (TOL3): <%= @convergence_option.tol3 %></p>
+				<p>Force Tolerance for Local Iterations (TOL5): <%= @convergence_option.tol5 %></p>
+				<p>Moment Tolerance for Local Iterations (TOL7): <%= @convergence_option.tol7 %></p>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Default stiffness for vertical connection elements" %>">
+					<p>Connection Element Stiffness (ALPHAC): <%= @convergence_option.alphac %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "For more information view the written manual" %>">
+					<p>Multiplier of yield strength of Floor-to-Floor springs to give Yield Strength of Floor-to-Floor Shear Dampers (A3): <%= @convergence_option.a3 %></p>
+				</span>
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			<%= button_to "Previous",  prev_path, :method => :get%>
+			<%= button_to "Next", next_path, :method => :get%>
+		</div>
+	</div> 
+</div>

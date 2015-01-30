@@ -1,0 +1,42 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-1 main">
+			<h4>Model - <%= @model.name %></h4>		
+			<%= button_to "Create Analysis", new_model_analysis_path(@model.id), :method => :get %>
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Analysis Name</th>
+							<th>Configuration</th>
+							<th></th>
+							<th></th>
+							<th>Run Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% @model.analyses.each do |analysis|%>
+							<tr>
+								<td><%= analysis.name %></td>
+								<td><%= button_to "Configure", model_analysis_default_path(@model.id, analysis.id, analysis.default.id), :method => :get %></td>
+								<td><%= button_to "Edit", edit_model_analysis_path(@model.id, analysis.id), method: :get %></td>
+								<td><%= button_to "Submit", submit_model_analysis_path(@model.id, analysis.id) %></td>
+								<td>Run Status</td>		
+								<td><%= button_to "View Results"%></td>
+								<td><%= button_to "Delete", model_analysis_path(@model.id, analysis.id), method: :delete%></td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-4 main">
+			<p>This page allows the user to view all analyses for the selected model.</p>
+			<li>Pressing the <b>"Create Analyis"</b> button will allow the user to create a new analysis. The link will send the user to the configuration page.</li>
+			<li>The <b>"Configure"</b> button allows the user to customize the currently active default configuration for the specific analysis.</li>
+			<li>The current status of the analysis is seen under the <b>"Run Status"</b> column. The different statuses are: Not Run, In Queue, Pending Approvial, Running, and Complete.</li>
+			<li>The <b>"View Results"</b> button allows the user to view and download the analysis results.</li>
+			<li>Pressing the <b>"Delete"</b> button causes the selected selected analyses and results to be perminantly deleted.</li>
+		</div>
+	</div>
+</div>

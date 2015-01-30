@@ -1,0 +1,110 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_fiber_option_path(@fiber_option.id) %>
+	<% prev_path = convergence_option_path(current_default.convergence_option.id)%>
+	<% next_path = vertical_constraint_option_path(current_default.vertical_constraint_option.id)%>
+	<% new_nsefbc_fiber = new_nsefbc_fiber_path %>
+	<% new_nsefbr_fiber = new_nsefbr_fiber_path %>
+<% else %>
+	<% edit_path = edit_model_analysis_default_fiber_option_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id) %>
+	<% prev_path = model_analysis_default_convergence_option_path(current_model.id, current_analysis.id, current_default.id, current_default.convergence_option.id) %>
+	<% next_path = model_analysis_default_vertical_constraint_option_path(current_model.id, current_analysis.id, current_default.id, current_default.vertical_constraint_option.id) %>
+	<% new_nsefbc_fiber = new_model_analysis_default_fiber_option_nsefbc_fiber_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id) %>
+	<% new_nsefbr_fiber = new_model_analysis_default_fiber_option_nsefbr_fiber_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Fiber Options</h3>
+			<div class="field">
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Axial Load Eccentricity factor for braces" %>">
+					<p>Axial Load Eccentricity Factor (EEC): <%= @fiber_option.eec %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Number of fiber segments for beam or column (Use 8)" %>">
+					<p>Number of Fiber Segments for Beams and Columns (NSEFBC): <%= @fiber_option.nsefbc %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Number of Fiber Segments for Braces (Use 7)" %>">
+					<p>Number of Fiber Segments for Braces (NSEFBR): <%= @fiber_option.nsefbr %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Maximum number of element iterations (Use 20)" %>">
+					<p>Maximum Number of Element Iterations (MILF): <%= @fiber_option.milf %></p>
+				</span>
+			</div>
+			
+			
+			
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			<span class="has-tooltip" data-toggle="tooltip" title="<%= "Segment lenghts for Beams and Column Elements. Use 1 0.03, 1 0.06, 1 0.16, 2 0.25, 1 0.16, 1 0.06, 1 0.03" %>">
+				<h4>Fiber Distribution in Beams and Columns (FRAC-BC):</h4>
+			</span>
+			<%= button_to "New", new_nsefbc_fiber, :method => :get %>
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+			                <th>Number of Fiber Segments</th>
+			                <th>Length of Segment</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+						<% @fiber_option.nsefbc_fibers.each do |br| %>
+							<% if params[:analysis_id] == nil %>
+								<% fiber_edit_bc_path = edit_nsefbc_fiber_path(br.id) %>
+								<% fiber_delete_bc_path = nsefbc_fiber_path(br.id) %>
+							<% else %>
+								<% fiber_edit_bc_path = edit_model_analysis_default_fiber_option_nsefbc_fiber_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id, br.id)%>
+								<% fiber_delete_bc_path = model_analysis_default_fiber_option_nsefbc_fiber_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id, br.id)%>
+							<% end %>
+							<tr>
+			                	<td><%= br.number %></td>
+								<td><%= br.length %></td>
+								<td><%= button_to "Edit", fiber_edit_bc_path, :method => :get %></td>
+								<td><%= button_to "Delete", fiber_delete_bc_path, method: :delete %></td>
+			                </tr>
+			            <% end %>
+			        </tbody>
+			    </table>
+			</div>
+			
+			<span class="has-tooltip" data-toggle="tooltip" title="<%= "Segment lenghts for Brace Elements. Use 1 0.25, 1 0.16, 1 0.07, 1 0.04, 1 0.07, 1 0.16, 1 0.25" %>">
+				<h4>Fiber Distribution in Braces (FRAC-BR):</h4>
+			</span>
+			
+			<%= button_to "New", new_nsefbr_fiber, :method => :get %>
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+			                <th>Number of Fiber Segments</th>
+			                <th>Length of Segment</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+						<% @fiber_option.nsefbr_fibers.each do |br| %>
+							<% if params[:analysis_id] == nil %>
+								<% fiber_edit_br_path = edit_nsefbr_fiber_path(br.id) %>
+								<% fiber_delete_br_path = nsefbr_fiber_path(br.id) %>
+							<% else %>
+								<% fiber_edit_br_path = edit_model_analysis_default_fiber_option_nsefbr_fiber_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id, br.id)%>
+								<% fiber_delete_br_path = model_analysis_default_fiber_option_nsefbr_fiber_path(current_model.id, current_analysis.id, current_default.id, @fiber_option.id, br.id)%>
+							<% end %>
+							<tr>
+			                	<td><%= br.number %></td>
+								<td><%= br.length %></td>
+								<td><%= button_to "Edit", fiber_edit_br_path, :method => :get %></td>
+								<td><%= button_to "Delete", fiber_delete_br_path, method: :delete %></td>
+			                </tr>
+			            <% end %>
+			        </tbody>
+			    </table>
+			</div>
+			<%= button_to "Previous", prev_path, :method => :get%>
+			<%= button_to "Next", next_path, :method => :get%>
+		</div>
+	</div> 
+</div>

@@ -1,0 +1,120 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_material_model_path(@material_model.id) %>
+	<% prev_path = response_time_history_option_path(current_default.response_time_history_option.id)%>
+	<% next_path = foundation_node_option_path(current_default.foundation_node_option.id)%>
+<% else %>
+	<% edit_path = edit_model_analysis_default_material_model_path(current_model.id, current_analysis.id, current_default.id, @material_model.id) %>
+	<% prev_path = model_analysis_default_response_time_history_option_path(current_model.id, current_analysis.id, current_default.id, current_default.response_time_history_option.id) %>
+	<% next_path = model_analysis_default_foundation_node_option_path(current_model.id, current_analysis.id, current_default.id, current_default.foundation_node_option.id) %>
+<% end %>
+
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<div class="field">
+				<h3>Material Model Options</h3><HR>
+				<h4>General Material Model Options</h4>
+				<p>Steel Material Shear Modulus: <%= @material_model.steelmat_G %></p>
+				<p>Steel Material Yield Stress Modulus: <%= @material_model.steelmat_Sy %></p>
+				<p>Default Shear Modulus for Basement Wall Elements: <%= @material_model.defwallshearmod %></p>
+				
+				<h4>Steel Material Models</h4>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>Material #</th>
+				                <th>Young's Modulus (E)</th>
+								<th>Initial Strain Hardening Modulus (ES)</th>
+								<th>Yield Stress (SIGY)</th>
+								<th>Ultimate Stress (SIGU)</th>
+								<th>Strain at Onset of Strain Hardening (EPSS)</th>
+								<th>Strain at Peak Stress (EPSU)</th>
+								<th>Poisson's Ratio (PRAT)</th>
+								<th>Residual Stress (RES)</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+								<td>1</td>
+				                <td><%= @material_model.mat_1_E %></td>
+								<td><%= @material_model.mat_1_ES %></td>
+								<td><%= @material_model.mat_1_SIGY %></td>
+								<td><%= @material_model.mat_1_SIGU %></td>
+								<td><%= @material_model.mat_1_EPSS %></td>
+								<td><%= @material_model.mat_1_EPSU %></td>
+								<td><%= @material_model.mat_1_PRAT %></td>
+								<td><%= @material_model.mat_1_RES %></td>								
+				            </tr>
+							<tr>
+								<td>2</td>
+				                <td><%= @material_model.mat_2_E %></td>
+								<td><%= @material_model.mat_2_ES %></td>
+								<td><%= @material_model.mat_2_SIGY %></td>
+								<td><%= @material_model.mat_2_SIGU %></td>
+								<td><%= @material_model.mat_2_EPSS %></td>
+								<td><%= @material_model.mat_2_EPSU %></td>
+								<td><%= @material_model.mat_2_PRAT %></td>
+								<td><%= @material_model.mat_2_RES %></td>								
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				<h4>Concrete Material Models</h4>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>Young's Modulus (E)</th>
+								<th>Crushing Stress</th>
+								<th>Percentage of Crushing for Tension</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+				                <td><%= @material_model.concretemat_E %></td>
+								<td><%= @material_model.concretemat_CS %></td>
+								<td><%= @material_model.concretemat_PCT %></td>							
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				
+				<h4>ETABS to STEEL Conversion</h4>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>STEEL Material Number</th>
+								<th>ETABS Material Name</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+				                <td>Steel - 1</td>
+								<td><%= @material_model.materialconv1 %></td>						
+				            </tr>
+							<tr>
+				                <td>Steel - 2</td>
+								<td><%= @material_model.materialconv2 %></td>						
+				            </tr>
+							<tr>
+				                <td>Concrete</td>
+								<td><%= @material_model.materialconv3 %></td>						
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+				<%= button_to "Previous",prev_path, :method => :get%>
+				<%= button_to "Next", next_path, :method => :get%>
+			</div>
+		</div>
+	</div> 
+</div>

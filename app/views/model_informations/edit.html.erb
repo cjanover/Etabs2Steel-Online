@@ -1,0 +1,40 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = model_information_path(@model_information.id) %>
+<% else %>
+	<% save_path = model_analysis_default_model_information_path(current_model.id, current_analysis.id, current_default.id, @model_information.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @model_information do |f| %>				
+				<div>
+					<%= f.label "Title:" %>
+					<%= f.text_field :title %>
+				</div> 
+				<div>
+					<%= f.label "Primary ETABS Direction:" %>
+					<%= f.text_field :primaryetabsdir %>
+				</div>
+				<div>
+					<%= f.label "ETABS Steel Section Database:" %>
+					<%= f.text_field :steelsection %>
+				</div>
+				
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>
+				<div class="action">
+					<%= button_to "Save", save_path %>
+				</div>				
+			<% end %>	
+		</div>
+	</div> 
+</div>

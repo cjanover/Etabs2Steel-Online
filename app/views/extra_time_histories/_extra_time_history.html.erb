@@ -1,0 +1,45 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = response_time_history_option_path(current_default.response_time_history_option.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_response_time_history_option_path(current_model.id, current_analysis.id, current_default.id, current_default.response_time_history_option.id) %>
+<% end %>
+
+<%= form_for @extra_time_history do |f| %>				
+	<div>
+		<%= f.label "X1:" %>
+		<%= f.text_field :x1 %>
+	</div> 
+	<div>
+		<%= f.label "Y1:" %>
+		<%= f.text_field :y1 %>
+	</div>
+	<div>
+		<%= f.label "Z1:" %>
+		<%= f.text_field :z1 %>
+	</div>
+	<div>
+		<%= f.label "X2:" %>
+		<%= f.text_field :x2 %>
+	</div>
+	<div>
+		<%= f.label "Y2:" %>
+		<%= f.text_field :y2 %>
+	</div>
+	<div>
+		<%= f.label "Z2:" %>
+		<%= f.text_field :z2 %>
+	</div>
+	<div>
+		<%= f.label "Output Type:" %>
+		<%= f.text_field :outputtype %>
+	</div>
+	<div>
+		<%= f.label "Output Value:" %>
+		<%= f.text_field :outputvalue %>
+	</div>
+
+				
+	<div class="action">
+		<%= button_to "Save", save_path %>
+	</div>
+<% end %>	

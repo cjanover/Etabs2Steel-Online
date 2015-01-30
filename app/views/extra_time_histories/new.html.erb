@@ -1,0 +1,48 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+		<% if params[:analysis_id] == nil %> <!-- Render the Config Version -->
+		
+			<div class="col-md-10 col-md-offset-2 main">
+				<%= render :partial => "extra_time_history" %>
+			</div>
+			
+		<% else %>	<!-- Render the Analysis Version -->
+			<%= form_for @extra_time_history do |f|%>
+				<div class="col-md-4 col-md-offset-2 main">
+
+					<%= render :partial => "shared/selectnode", :locals => {:node_name => "node_id"} %>
+				</div>
+				<div class="col-md-2 main">
+					<%= render :partial => "outputtype" %>
+					<div id="outputvalue-table" style="display:none;"></div>	
+				</div>
+				<div class="col-md-2 main" id="node2-table" style="display:none;"></div>
+
+				<div class="action">
+					<% if params[:analysis_id] == nil %>
+						<% response_time_history_route = response_time_history_option_path(current_default.response_time_history_option.id)%>
+					<% else %>
+						<% response_time_history_route = model_analysis_default_response_time_history_option_path(params[:model_id], params[:analysis_id], params[:default_id], params[:response_time_history_option_id])%>
+					<% end %>
+
+					
+					<% if params[:analysis_id] != nil %>
+						<!-- Set some param values -->
+						<%= hidden_field_tag :model_id, params[:model_id] %>
+						<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+						<%= hidden_field_tag :default_id, params[:default_id] %>
+					<% end %>
+
+					<%= button_to "Save", response_time_history_route %>
+				</div>
+			<% end %>
+			
+			<%= render :partial => "newjs" %>
+		<% end %>
+	</div> 
+</div>
+
+

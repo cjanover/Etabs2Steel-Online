@@ -1,0 +1,26 @@
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Point Name</th>
+				<th>Floor Name</th>
+				<th>X</th>	
+				<th>Y</th>
+				<th>Z</th>
+				<th>Select</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% current_model.nodes.each do |node| %>
+				<tr>
+					<td><%= node.point_name %></td>
+					<td><%= node.floor_name %></td>
+					<td><%= node.X %></td>
+					<td><%= node.Y %></td>
+					<td><%= node.Z %></td>
+					<td><%= radio_button(@model_name, local_assigns[:node_name]=="node_id" ? "node_id" : "node2_id" , node.id) %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>

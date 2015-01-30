@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  default_id: 1
+  ALP: 1.5
+  STRH: 1.5
+  STRVU: 1.5
+  STRVD: 1.5
+
+two:
+  default_id: 1
+  ALP: 1.5
+  STRH: 1.5
+  STRVU: 1.5
+  STRVD: 1.5

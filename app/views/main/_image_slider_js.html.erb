@@ -1,0 +1,30 @@
+<script> 
+	window.onload = startTime;
+
+	function displayNextImage()
+	{
+		x = (x == images.length - 1) ? 0 : x+1;
+		
+		document.getElementById('main_img_slider').src = images[x];
+		document.getElementById('main_img_slider').alt = images[x];
+
+	}
+	
+	function displayPreviousImage()
+	{
+		x = (x <= 0) ? images.length -1 : x-1;
+		document.getElementById("main_img_slider").src = images[x];
+	}
+	
+	function startTime()
+	{
+		setInterval(displayNextImage, 7000);
+	}
+	
+	var images = [], x = -1;
+	images[0] = "assets/Main/Image Slider/Conversion.png"
+	images[1] = "assets/Main/Image Slider/Deformed Shape.png"
+	images[2] = "assets/Main/Image Slider/Input.png"
+	images[3] = "assets/Main/Image Slider/NodeNumbering.png"
+</script>
+	

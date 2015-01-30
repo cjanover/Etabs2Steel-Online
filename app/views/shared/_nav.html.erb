@@ -1,0 +1,44 @@
+
+<% if params[:analysis_id] == nil %>
+	<ul class="nav nav-sidebar">
+		<li><b>General Information</b></li>
+		<li class="<%= 'active' if params[:controller] == 'users' %>"><%= link_to "Overview", user_path(current_user.id) %></li>
+		<li class="<%= 'active' if params[:controller] == 'profiles' %>"><%= link_to "User Information", profile_path(current_user.profile.id) %></li>
+	</ul>
+	<% if (current_user.profile.active_name != nil) %>
+		<% model_information_string = model_information_path(current_default.model_information.id) %>
+		<% analysis_option_string = analysis_option_path(current_default.analysis_option.id) %>
+		<% convergence_option_string = convergence_option_path(current_default.convergence_option.id) %>
+		<% fiber_option_string = fiber_option_path(current_default.fiber_option.id) %>
+		<% vertical_constraint_option_string = vertical_constraint_option_path(current_default.vertical_constraint_option.id) %>
+		<% load_option_string = load_option_path(current_default.load_option.id) %>
+		<% response_time_history_option_string = response_time_history_option_path(current_default.response_time_history_option.id) %>
+		<% material_model_string = material_model_path(current_default.material_model.id) %>
+		<% foundation_node_option_string = foundation_node_option_path(current_default.foundation_node_option.id) %>
+	<% end %>
+<% elsif params[:analysis_id] != nil %>
+	<% model_information_string = model_analysis_default_model_information_path(current_model.id, current_analysis.id, current_default.id, current_default.model_information.id)%>
+	<% analysis_option_string = model_analysis_default_analysis_option_path(current_model.id, current_analysis.id, current_default.id, current_default.analysis_option.id) %>
+	<% convergence_option_string = model_analysis_default_convergence_option_path(current_model.id, current_analysis.id, current_default.id, current_default.convergence_option.id) %>
+	<% fiber_option_string = model_analysis_default_fiber_option_path(current_model.id, current_analysis.id, current_default.id, current_default.fiber_option.id) %>
+	<% vertical_constraint_option_string = model_analysis_default_vertical_constraint_option_path(current_model.id, current_analysis.id, current_default.id, current_default.vertical_constraint_option.id) %>
+	<% load_option_string = model_analysis_default_load_option_path(current_model.id, current_analysis.id, current_default.id, current_default.load_option.id) %>
+	<% response_time_history_option_string = model_analysis_default_response_time_history_option_path(current_model.id, current_analysis.id, current_default.id, current_default.response_time_history_option.id) %>
+	<% material_model_string = model_analysis_default_material_model_path(current_model.id, current_analysis.id, current_default.id, current_default.material_model.id) %>
+	<% foundation_node_option_string = model_analysis_default_foundation_node_option_path(current_model.id, current_analysis.id, current_default.id, current_default.foundation_node_option.id) %>
+<% end %>
+<ul class="nav nav-sidebar">
+	<li><b>Current Default: <%= current_user.profile.active_name != nil ? current_user.profile.active_name : "None" %></b></li>
+	<% if current_user.profile.active_name != nil || params[:analysis_id] != nil %>
+		<li class="<%= 'active' if params[:controller] == 'model_informations' %>"><%= link_to "Model Information", model_information_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'analysis_options' %>"><%= link_to "Analysis Options", analysis_option_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'convergence_options' %>"><%= link_to "Convergence Options", convergence_option_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'fiber_options' %>"><%= link_to "Fiber Options", fiber_option_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'vertical_constraint_options' %>"><%= link_to "Vertical Constraint Options", vertical_constraint_option_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'load_options' %>"><%= link_to "Load Options", load_option_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'response_time_history_options' %>"><%= link_to "Response Time History Options", response_time_history_option_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'material_models' %>"><%= link_to "Material Model Options", material_model_string %></li>
+		<li class="<%= 'active' if params[:controller] == 'foundation_node_options' %>"><%= link_to "Foundation Node Options", foundation_node_option_string %></li>
+	<% end %>
+</ul>
+			

@@ -1,0 +1,37 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = response_time_history_option_path(@response_time_history_option.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_response_time_history_option_path(current_model.id, current_analysis.id, current_default.id, @response_time_history_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @response_time_history_option do |f| %>				
+				<div>
+					<%= f.label "Plot Response of all Primary Nodes (PlotAll):" %>
+					<%= f.text_field :plotall %>
+				</div>
+				<div>
+					<%= f.label "Plot Response of all Secondary Nodes (PlotSecondary):" %>
+					<%= f.text_field :plotsecondary %>
+				</div>
+
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>
+
+				<div class="action">
+					<%= button_to "Save", save_path %>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

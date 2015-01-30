@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  foundation_node_option_id: 1
+  name: MyString
+  ALP: 1.5
+  STRH: 1.5
+  STRVU: 1.5
+  STRVD: 1.5
+
+two:
+  foundation_node_option_id: 1
+  name: MyString
+  ALP: 1.5
+  STRH: 1.5
+  STRVU: 1.5
+  STRVD: 1.5

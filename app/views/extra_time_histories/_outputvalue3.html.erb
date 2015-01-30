@@ -1,0 +1,36 @@
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Output Value</th>
+				<th>Select</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Moment at Node 1</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "1")%></td>
+			</tr>
+			<tr>
+				<td>Moment at Node 2</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "2")%></td>
+			</tr>
+			<tr>
+				<td>Plastic Rotation at Node 1</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "3")%></td>
+			</tr>
+			<tr>
+				<td>Plastic Rotation at Node 2</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "4")%></td>
+			</tr>
+			<tr>
+				<td>Axial Force in Element</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "5")%></td>
+			</tr>
+			<tr>
+				<td>Plastic Axial Displacement in Element</td>
+				<td><%= radio_button("extra_time_history", :outputvalue, "6")%></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

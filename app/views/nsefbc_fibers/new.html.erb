@@ -1,0 +1,37 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = fiber_option_path(current_default.fiber_option.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_fiber_option_path(current_model.id, current_analysis.id, current_default.id, current_default.fiber_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @nsefbc_fiber do |f| %>				
+				<div>
+					<%= f.label "Number of Segments:" %>
+					<%= f.text_field :number %>
+				</div> 
+				<div>
+					<%= f.label "Length of Segment:" %>
+					<%= f.text_field :length %>
+				</div>
+				
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>
+				
+				<div class="action">
+					<%= button_to "Save", save_path%>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

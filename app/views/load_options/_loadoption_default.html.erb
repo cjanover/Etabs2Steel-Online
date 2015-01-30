@@ -1,0 +1,18 @@
+<%= form_for @load_option do |f| %>				
+	<div>
+		<%= f.label "Load Combination (LOADCOMBO):" %>
+		<%= f.text_field :load_combo %>
+	</div>
+	<div>
+		<%= f.label "Mass Combination (MASSCOMBO):" %>
+		<%= f.text_field :mass_combo %>
+	</div>
+	<div>
+		<%= f.label "Ground Acceleration Multiplier (GAMULT):" %>
+		<%= f.text_field :gamult %>
+	</div> 
+			
+	<div class="action">
+		<%= button_to "Save", load_option_path(@load_option.id) %>
+	</div>
+<% end %>	

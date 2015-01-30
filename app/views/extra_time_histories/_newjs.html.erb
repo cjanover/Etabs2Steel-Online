@@ -1,0 +1,44 @@
+<script> 
+	//Start with the proper ones loaded
+	<% if @extra_time_history.outputtype != nil %>
+		$('#outputvalue-table').html("<%= j (render 'outputvalue'+@extra_time_history.outputtype.to_s) %>");
+		$('#outputvalue-table').slideDown(10);
+	<% end %>
+	
+	<% if @extra_time_history.outputtype == 3 %>
+		$('#node2-table').html("<%= j (render '/shared/selectnode', :locals => {:node_name => "node2_id"}) %>");
+		$('#node2-table').slideDown(10);
+	<% end %>
+
+	var id = null;
+	$("input[name='extra_time_history[outputtype]']").click(function(){
+		id = this.value;
+		
+		switch (id){
+			case "1":
+				$('#outputvalue-table').slideUp(10);
+				$('#outputvalue-table').html("<%= j (render 'outputvalue1') %>");
+				$('#outputvalue-table').slideDown(10);
+				
+				$('#node2-table').slideUp(10);
+				break;
+	
+			case "2":
+				$('#outputvalue-table').slideUp(10);
+				$('#outputvalue-table').html("<%= j (render 'outputvalue2') %>");
+				$('#outputvalue-table').slideDown(10);
+				
+				$('#node2-table').slideUp(10);
+				break;
+		
+			case "3":
+				$('#outputvalue-table').slideUp(10);
+				$('#outputvalue-table').html("<%= j (render 'outputvalue3') %>");
+				$('#outputvalue-table').slideDown(10);
+				
+				$('#node2-table').html("<%= j (render '/shared/selectnode', :locals => {:node_name => "node2_id"}) %>")
+				$('#node2-table').slideDown(10);
+				break;
+		}		
+	});
+</script>

@@ -1,0 +1,103 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_response_time_history_option_path(@response_time_history_option.id) %>
+	<% prev_path = load_option_path(current_default.load_option.id)%>
+	<% next_path = material_model_path(current_default.material_model.id)%>
+<% else %>
+	<% edit_path = edit_model_analysis_default_response_time_history_option_path(current_model.id, current_analysis.id, current_default.id, @response_time_history_option.id) %>
+	<% prev_path = model_analysis_default_load_option_path(current_model.id, current_analysis.id, current_default.id, current_default.load_option.id) %>
+	<% next_path = model_analysis_default_material_model_path(current_model.id, current_analysis.id, current_default.id, current_default.material_model.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Response Time History Options</h3>
+			<div class="field">
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "For more information on what constitutes a Primary node, view the manual" %>">
+					<p>Plot Response of all Primary Nodes (PlotAll): <%= @response_time_history_option.plotall %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "For more information on what plots a secondary node, view the manual" %>">
+					<p>Plot Response of all Secondary Nodes (PlotSecondary): <%= @response_time_history_option.plotsecondary %></p>
+				</span>
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			
+			<span class="has-tooltip" data-toggle="tooltip" title="<%= "For more information on how to setup extra time histories view the manual" %>">
+				<h4>Extra Response Time Histories:</h4>
+			</span>
+			<% if params[:analysis_id] == nil %>
+				<% new_extra_time_history = new_extra_time_history_path %>
+			<% else %>
+				<% new_extra_time_history = new_model_analysis_default_response_time_history_option_extra_time_history_path(params[:model_id], params[:analysis_id], params[:default_id], @response_time_history_option.id) %>
+												   
+			<% end %>
+
+			<%= link_to new_extra_time_history do %>
+				<button class="btn btn-default">New</button>
+			<% end %>
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "X Coordinate of node in ETABS - Always required" %>">
+								<th>X1</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "Y Coordinate of node in ETABS - Always required" %>">
+								<th>Y1</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "Z Coordinate of node in ETABS - Always required" %>">
+								<th>Z1</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "X Coordinate of node in ETABS - Only required for Element Based Output i.e. if Output Type = 3" %>">
+								<th>X2</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "Y Coordinate of node in ETABS - Only required for Element Based Output i.e. if Output Type = 3" %>">
+								<th>Y2</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "Z Coordinate of node in ETABS - Only required for Element Based Output i.e. if Output Type = 3" %>">
+								<th>Z2</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "1 = Nodal Response Value, 2 = Panel Zone History, 3 = Beam/Column/Brace Element History" %>">
+								<th>Output Type</th>
+							</span>
+							<span class="has-tooltip" data-toggle="tooltip" title="<%= "if Output Type = 1, 1 = STEEL X direction, 2 = STEEL Y Direction, 3 = Beam Rotation, 4 = Column Rotation. If Output Type = 2, 1 = Panel Zone Moment, 2 = Panel Zone Plastic Rotation. If Output Type = 3, 1 = Moment at Node 1, 2 = Moment at Node 2, 3 = Plastic Rotation at Node 1, 4 = Plastic Rotation at Node 2, 5 = Axial Force in Element, 6 = Plastic Axial Displacement in Element" %>">
+								<th>Output Value</th>
+							</span>
+						</tr>
+					</thead>
+					<tbody>
+						<% @response_time_history_option.extra_time_histories.each do |br| %>
+							<% if params[:analysis_id] == nil %>
+								<% edit_path = edit_extra_time_history_path(br.id) %>
+								<% delete_path = extra_time_history_path(br.id) %>
+							<% else %>
+								<% edit_path = edit_model_analysis_default_response_time_history_option_extra_time_history_path(params[:model_id], params[:analysis_id], params[:default_id], @response_time_history_option.id, br.id) %>
+								<% delete_path = model_analysis_default_response_time_history_option_extra_time_history_path(params[:model_id], params[:analysis_id], params[:default_id], @response_time_history_option.id, br.id) %>
+							<% end %>
+							<tr>
+			                	<td><%= br.x1 %></td>
+								<td><%= br.y1 %></td>
+								<td><%= br.z1 %></td>
+								<td><%= br.x2 %></td>
+								<td><%= br.y2 %></td>
+								<td><%= br.z2 %></td>
+								<td><%= br.outputtype %></td>
+								<td><%= br.outputvalue %></td>
+								<td><%= button_to "Edit", edit_path, method: :get %></td>
+								<td><%= button_to "Delete", delete_path, method: :delete %></td>
+							</tr>
+							<% end %>
+						</tbody>
+					</table>
+				</div>
+			<%= button_to "Previous", prev_path, :method => :get%>
+			<%= button_to "Next", next_path, :method => :get%>
+		</div>
+	</div> 
+</div>
+

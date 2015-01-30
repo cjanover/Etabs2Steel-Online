@@ -1,0 +1,2 @@
+class Etabs2SteelManualsController < ApplicationController
+end

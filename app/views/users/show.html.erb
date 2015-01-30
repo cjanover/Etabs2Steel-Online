@@ -1,0 +1,38 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<p> From here the user is able to set personal information in the Profile tab to the left. Additionally, the user is able to create and edit different default configurations for the analysis.</p>
+			<li>To load an existing default configuration simply press <b>"Load"</b> in the table below for the desired configuration.</li>
+			<li>To create a new default configuration press the <b>"New Default"</b> button below and the website will guide the user through the creation.</li> 
+			<li>The names of existing default configurations can also be deleted or edited by pressing the <b>"Edit"</b> or <b>"Delete"</b> buttons in the table below.</li>
+			<br><br>
+			<p> When creating or editing a default configuration additional information on the requested input will sometimes be provided by mousing over the input label. The user will also be able to jump to different input sections via the navigation screen that will appear on the left. The user can also browse the currently selected defaults using the navigation screen on the left</p>
+			
+			<%= button_to "New Default", new_default_path, :method => :get %>
+			<br><br><br>
+				
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+			                <th>Name</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+						<% current_user.profile.defaults.each do |default| %>
+							<tr class="<%='info' if current_user.profile.active_name == default.name %>">
+			                	<td><%= default.name %></td>
+								<td><%= button_to "Load", load_user_path(default.name, method: :post)%>
+								<td><%= button_to "Edit", edit_default_path(default.id), :method => :get %></td>
+								<td><%= button_to "Delete", default_path(default.id), method: :delete %></td>
+			                </tr>
+			            <% end %>
+			        </tbody>
+			    </table>
+			</div>	
+		</div>
+	</div> 
+</div>

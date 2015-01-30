@@ -1,0 +1,30 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_load_option_path(@load_option.id) %>
+	<% prev_path = vertical_constraint_option_path(current_default.vertical_constraint_option.id)%>
+	<% next_path = response_time_history_option_path(current_default.response_time_history_option.id)%>
+<% else %>
+	<% edit_path = edit_model_analysis_default_load_option_path(current_model.id, current_analysis.id, current_default.id, @load_option.id) %>
+	<% prev_path = model_analysis_default_vertical_constraint_option_path(current_model.id, current_analysis.id, current_default.id, current_default.vertical_constraint_option.id) %>
+	<% next_path = model_analysis_default_response_time_history_option_path(current_model.id, current_analysis.id, current_default.id, current_default.response_time_history_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Load Options</h3>
+			<div class="field">
+				<p>Load Combination (LOADCOMBO): <%= @load_option.load_combo %></p>
+				<p>Mass Combination (MASSCOMBO): <%= @load_option.mass_combo %></p>
+				<p>Ground Acceleration Multiplier (GAMULT): <%= @load_option.gamult %></p>
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			<%= button_to "Previous", prev_path, :method => :get%>
+			<%= button_to "Next", next_path, :method => :get%>
+		</div>
+	</div> 
+</div>

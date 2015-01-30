@@ -1,0 +1,130 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = material_model_path(@material_model.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_material_model_path(current_model.id, current_analysis.id, current_default.id, @material_model.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @material_model do |f| %>				
+				<h3>General Material Model Options</h3>
+				<div>
+					<%= f.label "Steel Material Shear Modulus:"%>
+					<%= f.text_field :steelmat_G %>			
+				</div>
+				<div>
+					<%= f.label "Steel Material Yield Stress Modulus:"%>
+					<%= f.text_field :steelmat_Sy%>					
+				</div>
+				<div>
+					<%= f.label "Default Shear Modulus for Basement Wall Elements:"%>
+					<%= f.text_field :defwallshearmod %>
+				</div>
+				
+				<h3>Steel Material Models</h3>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>Material #</th>
+				                <th>Young's Modulus (E)</th>
+								<th>Initial Strain Hardening Modulus (ES)</th>
+								<th>Yield Stress (SIGY)</th>
+								<th>Ultimate Stress (SIGU)</th>
+								<th>Strain at Onset of Strain Hardening (EPSS)</th>
+								<th>Strain at Peak Stress (EPSU)</th>
+								<th>Poisson's Ratio (PRAT)</th>
+								<th>Residual Stress (RES)</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+								<td>1</td>
+				                <td><%= f.text_field :mat_1_E %></td>
+								<td><%= f.text_field :mat_1_ES %></td>
+								<td><%= f.text_field :mat_1_SIGY %></td>
+								<td><%= f.text_field :mat_1_SIGU %></td>
+								<td><%= f.text_field :mat_1_EPSS %></td>
+								<td><%= f.text_field :mat_1_EPSU %></td>
+								<td><%= f.text_field :mat_1_PRAT %></td>
+								<td><%= f.text_field :mat_1_RES %></td>								
+				            </tr>
+							<tr>
+								<td>2</td>
+				                <td><%= f.text_field :mat_2_E %></td>
+								<td><%= f.text_field :mat_2_ES %></td>
+								<td><%= f.text_field :mat_2_SIGY %></td>
+								<td><%= f.text_field :mat_2_SIGU %></td>
+								<td><%= f.text_field :mat_2_EPSS %></td>
+								<td><%= f.text_field :mat_2_EPSU %></td>
+								<td><%= f.text_field :mat_2_PRAT %></td>
+								<td><%= f.text_field :mat_2_RES %></td>								
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				<h3>Concrete Material Models</h3>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>Young's Modulus (E)</th>
+								<th>Crushing Stress</th>
+								<th>Percentage of Crushing for Tension</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+				                <td><%= f.text_field :concretemat_E %></td>
+								<td><%= f.text_field :concretemat_CS %></td>
+								<td><%= f.text_field :concretemat_PCT %></td>							
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				
+				<h3>ETABS to STEEL Conversion</h3>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>STEEL Material Number</th>
+								<th>ETABS Material Name</th>
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+				                <td>Steel - 1</td>
+								<td><%= f.text_field :materialconv1 %></td>						
+				            </tr>
+							<tr>
+				                <td>Steel - 2</td>
+								<td><%= f.text_field :materialconv2 %></td>						
+				            </tr>
+							<tr>
+				                <td>Concrete</td>
+								<td><%= f.text_field :materialconv3 %></td>						
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+				
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>
+				
+				<div class="action">
+					<%= button_to "Save", save_path %>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

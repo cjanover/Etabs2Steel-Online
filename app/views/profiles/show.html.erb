@@ -1,0 +1,17 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<div class="field">
+				<p>First Name: <%= @profile.first_name %></p>
+				<p>Last Name: <%= @profile.last_name %></p>
+				<p>Company: <%= @profile.company %></p>
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_profile_path(current_user.profile.id)%>
+			</div>
+		</div>
+	</div> 
+</div>

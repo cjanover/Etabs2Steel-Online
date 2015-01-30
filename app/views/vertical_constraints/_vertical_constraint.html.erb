@@ -1,0 +1,22 @@
+<%= form_for @vertical_constraint do |f| %>				
+	<div>
+		<%= f.label "X:" %>
+		<%= f.text_field :x %>
+	</div> 
+	<div>
+		<%= f.label "Y:" %>
+		<%= f.text_field :y %>
+	</div>
+	<div>
+		<%= f.label "Z:" %>
+		<%= f.text_field :z %>
+	</div>
+	<div>
+		<%= f.label "AlphaVC:" %>
+		<%= f.text_field :alphavc %>
+	</div>
+				
+	<div class="action">
+		<%= button_to "Save", vertical_constraint_option_path(current_default.vertical_constraint_option.id)%>
+	</div>
+<% end %>	

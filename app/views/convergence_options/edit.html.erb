@@ -1,0 +1,57 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = convergence_option_path(@convergence_option.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_convergence_option_path(current_model.id, current_analysis.id, current_default.id, @convergence_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @convergence_option do |f| %>				
+				<div>
+					<%= f.label "Maximum number of global iterations (MIG):" %>
+					<%= f.text_field :mig %>
+				</div> 
+				<div>
+					<%= f.label "Force Tolerance for Global Iterations (TOL1):" %>
+					<%= f.text_field :tol1 %>
+				</div> 
+				<div> 
+					<%= f.label "Moment Tolerance for Global Iterations (TOL3):" %>
+					<%= f.text_field :tol3 %>
+				</div> 
+				<div> 
+					<%= f.label "Force Tolerance for Local Iterations (TOL5):" %>
+					<%= f.text_field :tol5 %>
+				</div> 
+				<div> 
+					<%= f.label "Moment Tolerance for Local Iterations (TOL7):" %>
+					<%= f.text_field :tol7 %>
+				</div>  
+				<div>
+					<%= f.label "Connection Element Stiffness (ALPHAC):" %>
+					<%= f.text_field :alphac %>
+				</div> 
+				<div>
+					<%= f.label "Multiplier of yield strength of Floor-to-Floor springs to give Yield Strength of Floor-to-Floor Shear Dampers (A3):" %>
+					<%= f.text_field :a3 %> 
+				</div> 
+				
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>
+				
+				<div class="action">
+					<%= button_to "Save", save_path %>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

@@ -1,0 +1,113 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = analysis_option_path(@analysis_option.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_analysis_option_path(current_model.id, current_analysis.id, current_default.id, @analysis_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @analysis_option do |f| %>				
+				<div>
+					<%= f.label "Panel Zone Rigidity:" %>
+					<%= f.text_field :panel_zone_rigidity %>
+				</div> 
+				<div>
+					<%= f.label "Maximum Number of Turning Points in Hysteretic Models (MTP):" %>
+					<%= f.text_field :mtp %>
+				</div> 
+				<div>
+					<%= f.label "Maximum Number of Turning Points (NDIM):" %>
+					<%= f.text_field :ndim %>
+				</div>
+				<div> 
+					<%= f.label "Number of Static Steps (NSS):" %>
+					<%= f.text_field :nss %>
+				</div> 
+				<div> 
+					<%= f.label "Newmark Integration Parameter (Beta):" %>
+					<%= f.text_field :beta %>
+				</div> 
+				<div> 
+					<%= f.label "Newmark Integration Parameter (Gamma):" %>
+					<%= f.text_field :gamma %>
+				</div>  
+				<div>
+					<%= f.label "Rayleigh Damping Parameter (A0):" %>
+					<%= f.text_field :a0 %>
+				</div> 
+				<div>
+					<%= f.label "Assumed Period of First Mode:" %>
+					<%= f.text_field :first_mode_period %> 
+				</div> 
+				<div>
+					<%= f.label "Stiffness Proportional Rayleigh Damping Value:" %>
+					<%= f.text_field :damping_ratio_stiffness %>
+				</div> 
+				<div>
+					<%= f.label "Column Damping Ratio:" %>
+					<%= f.text_field :damping_ratio_column %>
+				</div> 
+				<div>
+					<%= f.label "Percent of Base Shear used for Damping:" %>
+					<%= f.text_field :base_shear_percent %>
+				</div> 
+				<div>
+					<%= f.label "Assumed Pushover Base Shear:" %>
+					<%= f.text_field :base_shear %>
+				</div> 
+				<div>
+					<%= f.label "Ratio between F_push and F_eq_des:" %>
+					<%= f.text_field :r %>
+				</div> 
+				<div>
+					<%= f.label "Assumed Drift of Base Floor:" %>
+					<%= f.text_field :base_drift %>
+				</div> 
+				<div>
+					<%= f.label "Dynamic Time Step (DT):" %>
+					<%= f.text_field :dt %>
+				</div> 
+				<div>
+					<%= f.label "Output interval for Time Histories (IRINT):" %>
+					<%= f.text_field :irint %>
+				</div>  
+				<div>
+					<%= f.label "Additional Time History Output Toggle (IROUT):" %>
+					<%= f.text_field :irout %>
+				</div>  
+				<div>
+					<%= f.label "Time Step where Dynamic Analysis Ends (ISTOP):" %>
+					<%= f.text_field :istop %>
+				</div> 
+				<div>
+					<%= f.label "Debug Level (DEBUGLEVEL):" %>
+					<%= f.text_field  :debuglevel %>
+				</div>
+				<div>
+					<%= f.label "Generate Section Conversion File (SECTIONCONVERSION):" %>
+					<%= f.text_field :sectionconversion %>
+				</div>
+				<div>
+					<%= f.label "Generate Material Conversion File (MATCONVERSION):" %>
+					<%= f.text_field :matconversion %>
+				</div>
+				
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>
+				
+				<div class="action">
+					<%= button_to "Save", save_path %>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

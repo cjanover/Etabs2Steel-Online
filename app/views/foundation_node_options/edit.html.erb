@@ -1,0 +1,51 @@
+<% if params[:analysis_id] == nil %>
+	<% save_path = foundation_node_option_path(current_default.foundation_node_option.id) %>	
+<% else %>
+	<% save_path = model_analysis_default_foundation_node_option_path(current_model.id, current_analysis.id, current_default.id, current_default.foundation_node_option.id) %>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @foundation_node_option do |f| %>				
+				<h3>Foundation Node Options</h3>
+				<h4>Default Foundation Node</h4>
+				<div class="table-responsive">
+					<table class="table table-striped">
+				    	<thead>
+							<tr>
+				                <th>Post-Yield Stiffness Ratio for Foundation Springs (ALP)</th>
+				                <th>Yield Strength of Horizontal Spring (STRH)</th>
+								<th>Yield Strength of Vertical Spring in Upward Direction (STRVU)</th>
+								<th>Yield Strength of Vertical Spring in Downward Direction (STRVD)
+				            </tr>
+				        </thead>
+				        <tbody>
+							<tr>
+				                <td><%= f.text_field :ALP %></td>
+								<td><%= f.text_field :STRH %></td>
+								<td><%= f.text_field :STRVU %></td>
+								<td><%= f.text_field :STRVD %></td>
+				            </tr>
+				        </tbody>
+				    </table>
+				</div>
+					
+				<% if params[:analysis_id] != nil %>
+					<!-- Set some param values -->
+					<%= hidden_field_tag :model_id, params[:model_id] %>
+					<%= hidden_field_tag :analysis_id, params[:analysis_id] %>
+					<%= hidden_field_tag :default_id, params[:default_id] %>
+				<% end %>	
+					
+				<div class="action">
+					<%= button_to "Save", save_path %>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

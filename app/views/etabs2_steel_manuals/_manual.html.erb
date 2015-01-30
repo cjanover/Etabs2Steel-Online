@@ -1,0 +1,279 @@
+
+<div class="Manual">
+<section id="Introduction" class = "group">
+	<h3>Introduction</h3>
+	<p>Etabs2Steel is an automatic model generation tool for the in-house non-linear analysis software STEEL created by Professor John Hall at The California Institute of Technology. Etabs2Steel allows the user to create models in the widely used analysis and design tool ETABS from Computers and Structures Inc and import many of the modeled paramaters into a text file STEEL understands.
+	This software was written to aid in the research of graduate students at Caltech as well as allow researchers from other universities to begin utilizing STEEL without the steep learning curve that comes with learning a new piece of software. Additionally, since STEEL has no graphical user interface, creating large models with no errors can be difficult and time consuming. Etabs2Steel aims to alleviate this by allowing the user to utilize the graphical front end of ETABS.</p>
+	<p>Etabs2Steel is custom software written in C++ by Christopher Janover at The California Institute of Technology and works by parsing through the text-based save file created by ETABS (.e2k file) along with supplemential information in the form of a configuration file, reorganizing the data, then outputting to a format STEEL understands. Additionally, several post-processing tools have been created in Matlab that allow the user to more easily visualize the results from STEEL analyses.</p>
+	<p>This manual will begin by demonstrating to the user how to properly make models in ETABS by going through every type of element and property available for importing and discussing acceptable modeling techniques. Next, a detailed discussion of the Etabs2Steel configuration file is done to give the user a thorough understanding of how Etabs2Steel uses this file to supplement data imported from ETABS. Following this, some of the post-processing tools created in Matlab to assist in visualization of the results are discussed and their source code is given. A commentary section is also included in this manual that discusses the inner workings of both Etabs2Steel and STEEL and goes through the assumptions made in the current version of the conversion software in addition to methods and techniques to modify the input files to meet the individual needs of the user.</p> 
+	<p>Additionally, this manual gives a detailed description of the format of the STEEL input files so the user may manually modify input to meet their personal needs. Following this, a description of the steps necessary as well as the source code needed to run multiple analyses simultaneously on a PBS server is given allowing the user to rapidly analyze a model for a series of ground motions. Lastly, an example problem is given for a six story braced frame building developed by Anthony Massari at Caltech. The ETABS .e2k file, Etabs2Steel configuration file, and STEEL input files are all given to allow the user to verify proper modeling technique. Additionally, ground motions and the results from the analysis can also be made available upon request.</p>
+		<p>To obtain the most current version of STEEL, Etabs2Steel, and this manual email cjanover@caltech.edu or visit www.somethingsomething and the files and executable will be provided. For any questions, comments, or bug reports email all relevant information to cjanover@caltech.edu.</p>
+</section>
+
+<section id="EtabsModelCreation" class="group">
+	<h3>ETABS Model Creation</h3>
+	
+	<p>There are several rules and assumptions made by Etabs2Steel that must be followed when creating an ETABS model. All STEEL models must have an orthogonal Primary and a Secondary direction where the Primary direction is the direction in which earthquake motions will be applied. Since STEEL is a 2D analyses software, to model 3D structures as accurately as possible several specality elements have been developed which, in conjuction with Etabs2Steel, transforms the full 3D ETABS model into a series of 2D projections in a roughly equivalent STEEL model.</p> 
+	<p>However, since it is impossible to fully capture certain 3D effects in 2D analysis, such as torsion and bi-axial bending, certain restrictions must be made on the ETABS model to yield an accurate 2D representation. First, it is recommended that all ETABS models to be imported be symmetric in the direction the system is being loaded, as this will reduce the amount of torsion in the structure. Second, the lateral system should be designed to avoid the occurance of biaxial bending. This means avoiding moment connections in two orthogonal directions on a single column. For more information on the 3D to 2D conversion see sections 5.2 and 5.3</p>
+	<p>For all STEEL models the direction that is considered Primary will contain the majority of the column elements and is the major focus of the analysis. The choice of Primary vs. Secondary Direction will be specified in the Etabs2Steel configuration file (which will be discussed later in the manual) allowing for general model construction in both orthogonal directions in ETABS without regard to this constraint. However, the user will be made aware of how their placement of elements effects which grouping the elements are placed into. More information about this 3D to 2D conversion can be found in Section 5.3.</p>
+	
+	<div id="EtabsModelCreation_GridSystem" class="subgroup">
+		<h4>Grid System</h4>
+		
+		<p>Grids in ETABS can be created utilizing either the default “Quick Templates” or the grid editor inside the model. All grids must be orthogonal and there are hardly any restrictions on spacing or labeling. Images of example grid system can be seen in Figure 2 1.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-1-GridSystem.png", width: "300"%>
+		
+		<p>The grid system shown in part a) of the previous figure is an acceptable grid system because it is symmetric, has unique grid labels, and has gridlines which are tangent to either the X or Y directions. The grid system in part b) is not acceptable because the grid system has been rotated away from the X and Y-axis. The grid system in part c) is acceptable, however is not recommended. Since the gridlines are not symmetric various 3D effects such as torsion will not be captured properly in the 3D to 2D conversion. Finally, the grid system in part d) is not acceptable because of the non-unique grid labels.</p>	
+	</div>
+	
+	<div id="EtabsModelCreation_LineElements" class="subgroup">
+		<h4>Line Elements</h4>
+		<p>The three types of line elements in ETABS that can be converted to STEEL are columns, beams, and braces. All three have similar restrictions with some additional restrictions placed on columns</p>
+		
+		<div id="ETABSModelCreation_Geometry_GeneralLineElementRestrictions" class="subsubgroup">
+			<h5>General Line Element Restrictions</h5>
+			<p>All line elements must be divided at the intersection of any connecting element or break in floor. While in software such as ETABS it is possible for an “auto-meshing” feature to be enabled. In STEEL if the line elements are not meshed they will behave as though they are not connected. This situation often arises when constructing the lateral system in the model. An example of an acceptable and not acceptable element meshing can be seen in Figure 2 2.</p>
+			
+			<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-2-Meshing.png", width: "600"%>
+			
+			<p>The image on the left shows that the beam spanning over the Chevron brace is not meshed at the intersection of the brace at the midpoint of the beam. This results in the STEEL model treating this configuration as a simply supported beam and a freestanding set of braces. This can be resolved in the model by selecting all elements and using the “divide all frames at intersection” feature located under the Edit->Divide Frame menu. The result of this is the image on the right of Figure 2 2. Here the beam spanning between the columns has been divided in two and now meshes at the intersection point of the Chevron brace.</p>
+		</div>
+		
+		<div id="ETABSModelCreation_Geometry_ColumnElementRestrictions" class="subsubgroup">
+			<h5>Column Element Restrictions</h5>
+			<p>The placement of column elements in ETABS effects how Etabs2Steel treats these elements. Columns in ETABS must either be placed at the intersection of two grid locations or on a gridline running parallel to either the X or Y-axis. It is not acceptable to place a column in free-space. Examples of acceptable column placements can be seen in Figure 2 3. Placing a column at the intersection of two gridlines results in Etabs2Steel treating that column as Primary. If a column is placed solely on a gridline that runs parallel to the Primary Direction than the column is treated as Primary. Similarly, if the column is placed solely on a gridline that runs parallel to the Secondary Direction than the column is treated as Secondary.</p>
+			<p>While all columns in ETABS default to strong axis bending in the X direction it is possible to import column orientation from ETABS to STEEL. This can be accomplished this select a column and assign a local axis roation of 90 degrees. This will cause the element to have weak axis bending in the X direction</p>
+			
+			<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-3-Column Placement.png", width: "600"%>
+		</div>
+		
+		<div id="ETABSModelCreation_Geometry_BeamElementRestrictions" class="subsubgroup">
+			<h5>Beam Element Restrictions</h5>
+			<p>All beam elements placed in ETABS must run parallel to either the Primary or Secondary Directions. It is not acceptable to have a beam that runs diagonally. A beam element will be treated as Primary if it runs parallel to the Primary direction and will be treated as Secondary if it runs parallel to the Secondary direction. Additionally, all columns must be braced on every floor by a beam. It is not acceptable to have a column spanning more than one floor without a beam framing into it, as it will cause instability in the model. It is therefore required that the user place pinned infill beams between all columns even if no lateral system exists at that location. An example of acceptable and unacceptable frame can be seen in Figure 2 4.</p>
+			
+			<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-4-Column Bracing.png", width: "600"%>
+		</div>
+		
+		<div id="ETABSModelCreation_Geometry_BraceElementRestrictions" class="subsubgroup">
+			<h5>Brace Element Restrictions</h5>
+			<p>All brace elements must run in a plane parallel to the Z-axis. A brace is considered to be Primary if it lies in a plane parallel to the Primary Direction and is considered to be Secondary if it lies in a plane parallel to the Secondary Direction. Additionally, HSS sections may only be used as brace elements.</p>
+		</div>
+	</div>
+	
+	<div id="ETABSModelCreation_Restraints" class="subgroup">
+		<h4>Restraints</h4>
+		<p>Any node in the STEEL model can be restrained by assigning restraints in the ETABS model. Nodes can be restrained in horizontal and vertical directions (UX, UY, UZ) as well as rotation about the X and Y-axis (RX, RY). If the Primary Direction of the model is the X direction and the model is restrained in the UX, UZ, RY and the node is Primary, then it will be treated as fixed while if the node is Secondary then it will be pinned.</p>
+		<p>Any combination of restraints can be used in the model, however. It is traditional to only restrain the base nodes.</p>
+	</div>
+	
+	<div id="ETABSModelCreation_Releases" class="subgroup">
+		<h4>Releases</h4>
+		<p>Any element in the STEEL model can be given releases by assigning releases in the ETABS model. Etabs2Steel is capable of importing only moment releases into STEEL. A more detailed discussion on releases can be found in Section 5.5 on page 24.</p>
+	</div>
+	
+	<div id="ETABSModelCreation_LoadingLoadCombinations" class="subgroup">
+		<h4>Loading / Load Combinations</h4>
+		<p>Only point loads can be transferred to STEEL and all loads must be placed in a load combination. STEEL imports two load combinations that are specified in the Etabs2Steel configuration file by name. Therefore, it is possible to have more combinations created in ETABS and run multiple sets of STEEL analyses by changing the important load combination in the Etabs2Steel configuration file. Steel uses these two load combinations to apply static loading and mass on the model, therefore it is advised to create load patterns in ETABS for loads such as dead, live, roof, etc. and to then combine them with the appropriate load factors into a named combination to be applied to the STEEL nodes. When creating the mass combination assign the loads as a weight in the appropriate unit (i.e. N, lb.) and Etabs2Steel will apply the mass in both the vertical and horizontal directions on the Primary frames.</p> 
+		<p>It is not acceptable to create combinations of combinations in ETABS. Similarly, all combination and pattern names must be unique. Additionally, only nodal loading is imported into STEEL.</p>
+		<p>For more information on importing load combinations see Section 3 on page 3.</p>
+	</div>
+	
+	<div id="ETABSModelCreation_SectionsCustomSections" class="subgroup">
+		<h4>Sections / Custom Sections</h4>
+		<p>Etabs2Steel is able to assign the appropriate sections to STEEL given section assigns from ETABS. Both premade and custom sections can be utilized however, only wide-flange and tube shapes are currently implemented. Additionally, any tube section used in the model must have a section name that begins with HSS. To create a custom section use either the I/Wide Flange  or the Box/Tube Section tool in the Define->Section Properties->Sections->Add New Property menu and give the section a unique name. It is not acceptable to leave sections with the default section type (FSEC-1). Etabs2Steel will automatically convert US section properties to Metric when the ETABS .e2k file is exported in a metric unit.</p>
+	</div>
+	
+	<div id="ETABSModelCreation_Springs" class="subgroup">
+		<h4>Springs</h4>
+		<p>Etabs2Steel has the ability to import the location of springs from ETABS into STEEL; however, specific properties about the spring are assigned via the Etabs2Steel configuration file. To assign a node in STEEL with a specific spring property, define a linear spring type in ETABS with the same name as the non-linear spring definition in the Etabs2Steel configuration file. For more information how to implement springs see spring input description in Section 3.</p>
+	</div>
+	
+	<div id="ETABSModelCreation_Walls" class="subgroup">
+		<h4>Walls</h4>
+		<p>Wall elements in ETABS can be used to create basement wall elements in STEEL. Etabs2Steel only imports the name and location of the wall elements from ETABS. Specific properties of these elements are defined and assigned via the Etabs2Steel configuration file. All ETABS wall elements must be rectangular and be drawn vertically. These elements are usually drawn on the bottom floor. Custom sections can be created via the built-in ETABS wall element section definition form. For more information on the function of basement wall elements see Section 3 on page 13.</p>
+	</div>
+	
+	<div id="ETABSModelCreation_Decking" class="subgroup">
+		<h4>Decking</h4>
+		<p>Etabs2Steel has the ability to import both the ETABS deck definitions and locations into STEEL.  When defining a deck property in ETABS take note of the different definitions meanings between ETABS and STEEL to ensure the element is defined properly. Figures showing the ETABS deck definition window with visual representation can be seen in Figure 2 5, while a figure showing deck input in STEEL format can be seen in Figure 2 6. Note that Etabs2Steel automatically converts from ETABS format to STEEL format.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-5 ETABS Decking.png", width: "300"%>
+		<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-6 ETABS Visual Decking.png", width: "300"%>
+		<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-7 STEEL Decking.png", width: "700"%>
+		
+		<p>In the current version of Etabs2Steel only one type of deck may be present on a particular floor. It is not acceptable to draw a floor with multiple deck properties or with decking only a particular location. An example of an acceptable method of placing deck elements in ETABS can be seen in Figure 2 7. For more information on these limitations see Section 5.8.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/2 - Etabs Model Creation/2-8 Proper Deck Placement.png", width: "400"%>
+	</div>
+	<div id="ETABSModelCreation_Materials" class="subgroup">
+		<h4>Materials</h4>
+		As the material models used in STEEL are more complex than those used by ETABS, material element assignments or definitions are not directly imported from ETABS. Rather, the user assigns a material to each ETABS element, defines the STEEL material in the Etabs2Steel configuration file with a lookup between ETABS material name and STEEL material number. This is discussed in more detail in the Etabs2Steel configuration explanation in Section 3.
+	</div>
+</section>
+
+<section id="Etabs2SteelConfigurationFile" class = "group">
+	<h3>Etabs2Steel Configuration File</h3>
+</section>
+
+<section id="PostProcessingTools" class = "group">
+	<h3>Post Processing Tools</h3>
+	<div id="PostProcessingTools_LoadData" class="subgroup">
+		<h4>Load Data</h4>
+	</div>
+	<div id="PostProcessingTools_PlotUndeformedShape" class="subgroup">
+		<h4>Plot Undeformed Shape</h4>
+	</div>
+	<div id="PostProcessingTools_PlotDynamicAnalysis" class="subgroup">
+		<h4>Plot Dynamic Analysis</h4>
+	</div>
+</section>
+
+<section id="Commentary" class = "group">
+	<h3>Commentary</h3>
+	<div id="Commentary_Diaphragms" class="subgroup">
+		<h4>Diaphgragms</h4>
+	</div>
+	<div id="Commentary_VerticalConnectionElements" class="subgroup">
+		<h4>Vertical Connection Elements</h4>
+	</div>
+	<div id="Commentary_ModelingOfSecondaryFrames" class="subgroup">
+		<h4>Modeling of Secondary Frames</h4>
+	</div>
+	<div id="Commentary_RayleighDamping" class="subgroup">
+		<h4>Rayleigh Damping</h4>
+	</div>
+	<div id="Commentary_Releases" class="subgroup">
+		<h4>Releases</h4>
+	</div>
+	<div id="Commentary_DampingSpecialColumns" class="subgroup">
+		<h4>Damping / Special Columns</h4>
+	</div>
+	<div id="Commentary_ElementStrongAxisWeakAxisOrientation" class="subgroup">
+		<h4>Element String Axis / Weak Axis Orientation</h4>
+	</div>
+	<div id="Commentary_NodalMass" class="subgroup">
+		<h4>Nodal Mass</h4>
+	</div>
+	<div id="Commentary_Decking" class="subgroup">
+		<h4>Decking</h4>
+	</div>
+	<div id="Commentary_Units" class="subgroup">
+		<h4>Units</h4>
+	</div>
+	<div id="Commentary_Gravity" class="subgroup">
+		<h4>Gravity</h4>
+	</div>
+	<div id="Commentary_PanelZones" class="subgroup">
+		<h4>PanelZones</h4>
+	</div>
+	<div id="Commentary_ElementConnectivity" class="subgroup">
+		<h4>Element Connectivity</h4>
+	</div>
+	<div id="Commentary_AxislLoadEccentricity" class="subgroup">
+		<h4>Axial Load Eccentricity</h4>
+	</div>
+	<div id="Commentary_NodeNumbering" class="subgroup">
+		<h4>Node Numbering</h4>
+	</div>
+</section>
+
+<section id="SteelInputFiles" class = "group">
+	<h3>Steel Input Files</h3>
+	<div id="SteelInputFiles_for001" class="subgroup">
+		<h4>for001</h4>
+	</div>
+	<div id="SteelInputFiles_for002" class="subgroup">
+		<h4>for002</h4>
+	</div>
+	<div id="SteelInputFiles_for003" class="subgroup">
+		<h4>for003</h4>
+	</div>
+	<div id="SteelInputFiles_for020" class="subgroup">
+		<h4>for020</h4>
+	</div>
+	<div id="SteelInputFiles_for021" class="subgroup">
+		<h4>for021</h4>
+	</div>
+	<div id="SteelInputFiles_for029" class="subgroup">
+		<h4>for029</h4>
+	</div>
+</section>
+
+<section id="RunningSteelOnAPBSServer" class = "group">
+	<h3>Running Steel On A PBS Server</h3>
+	<div id="RunningSteelOnAPBSServer_DirectorySetup" class="subgroup">
+		<h4>Directory Setup</h4>
+	</div>
+	<div id="RunningSteelOnAPBSServer_ServerScripts" class="subgroup">
+		<h4>ServerScripts</h4>
+		<div id="RunningSteelOnAPBSServer_ServerScripts_runSH" class="subsubgroup">
+			<h5>run.sh</h5>
+		</div>
+		<div id="RunningSteelOnAPBSServer_ServerScripts_clientSH" class="subsubgroup">
+			<h5>client.sh</h5>
+		</div>
+	</div>
+	<div id="RunningSteelOnAPBSServer_SubmittingAJob" class="subgroup">
+		<h4>Submitting a Job</h4>
+	</div>
+	<div id="RunningSteelOnAPBSServer_MonitoringResults" class="subgroup">
+		<h4>Monitoring Results</h4>
+	</div>
+</section>
+
+<section id="Sample6StoryModel" class = "group">
+	<h3>Sample 6 Story Model</h3>
+	<div id="Sample6StoryModel_ETABSModel" class="subgroup">
+		<h4>ETABS Model</h4>
+	</div>
+	<div id="Sample6StoryModel_SampleE2KFile" class="subgroup">
+		<h4>Sample .e2k File</h4>
+	</div>
+	<div id="Sample6StoryModel_SampleEtabs2SteelConfigurationFile" class="subgroup">
+		<h4>Sample Etabs2Steel Configuration File</h4>
+	</div>
+	<div id="Sample6StoryModel_SampleSTEELInputFile" class="subgroup">
+		<h4>Sample STEEL Input File</h4>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_6StoryBaseBeams" class="subsubgroup">
+			<h5>6_Story_Base_Beams (for001)</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_HorizontalGroundAcceleration" class="subsubgroup">
+			<h5>Horizontal Ground Acceleration (for002)</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_VerticalGroundAcceleration" class="subsubgroup">
+			<h5>Vertical Ground Acceleration (for003)</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_6StoryBaseBeamsSections" class="subsubgroup">
+			<h5>6_Story_Base_Beams - Sections (for020)</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_6StoryBaseBeamsSlabs" class="subsubgroup">
+			<h5>6_Story_Base_Beams - Slabs (for021)</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_RandomSeed" class="subsubgroup">
+			<h5>Random Seed (for029)</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_GridShiftConversion" class="subsubgroup">
+			<h5>Grid Shift Conversion</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_MaterialConversion" class="subsubgroup">
+			<h5>Material Conversion</h5>
+		</div>
+		<div id="Sample6StoryModel_SampleSTEELInputFile_SectionConversion" class="subsubgroup">
+			<h5>Section Conversion</h5>
+		</div>
+	</div>
+	<div id="Sample6StoryModel_SampleSTEELOutputFile" class="subgroup">
+		<h4>Sample STEEL Output File</h4>
+	</div>
+</section>
+
+<section id="ChangeLog" class = "group">
+	<h3>Change Log</h3>
+</section>
+
+<section id="WorksCited" class = "group">
+	<h3>Works Cited</h3>
+</section>
+
+</div>

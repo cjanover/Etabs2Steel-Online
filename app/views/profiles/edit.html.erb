@@ -1,0 +1,27 @@
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial =>  "shared/nav" %>
+		</div>
+
+		<div class="col-md-10 col-md-offset-2 main">
+			<%= form_for @profile do |f| %>
+				<div class="field">
+					<%= f.label :first_name%>
+					<%= f.text_field :first_name%>
+				</div>
+				<div class="field">
+					<%= f.label :last_name%>
+					<%= f.text_field :last_name%>
+				</div>
+				<div class="field">
+					<%= f.label :company%>
+					<%= f.text_field :company%>
+				</div>
+				<div class="action">
+					<%= button_to "Save", profile_path(current_user.profile.id)%>
+				</div>
+			<% end %>	
+		</div>
+	</div> 
+</div>

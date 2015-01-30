@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  steelmat: 1.5
+  defwallshearmod: 
+  concretemat: 1.5
+  materialconv1: MyString
+  materialconv2: MyString
+  materialconv3: MyString
+
+two:
+  user_id: 1
+  steelmat: 1.5
+  defwallshearmod: 
+  concretemat: 1.5
+  materialconv1: MyString
+  materialconv2: MyString
+  materialconv3: MyString

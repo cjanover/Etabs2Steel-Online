@@ -1,0 +1,32 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_model_information_path(@model_information.id) %>
+	<% next_path = analysis_option_path(current_default.analysis_option.id)%>
+<% else %>
+	<% edit_path = edit_model_analysis_default_model_information_path(current_model.id, current_analysis.id, current_default.id, @model_information.id) %>
+	<% next_path = model_analysis_default_analysis_option_path(current_model.id, current_analysis.id, current_default.id, current_default.analysis_option.id)%>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Model Information</h3>
+			<div class="field">
+				<p>Title: <%= format_value(@model_information.title) %></p>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Direction in ETABS to conduct the analysis. i.e. X, Y, or Z" %>">
+					<p>Default ETABS Primary Direction (primaryetabsdir): <%= format_value(@model_information.primaryetabsdir) %></p>
+				</span>
+				<span class="has-tooltip" data-toggle="tooltip" title="<%= "Name of the ETABS section database file. AISC14.xml is most common." %>">
+					<p>ETABS Steel Section Database (steelsection): <%= format_value(@model_information.steelsection) %></p>
+				</span>
+			</div>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			
+			<%= button_to "Next", next_path , :method => :get%>
+		</div>
+	</div> 
+</div>

@@ -1,0 +1,64 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_vertical_constraint_option_path(@vertical_constraint_option.id) %>
+	<% prev_path = fiber_option_path(current_default.fiber_option.id)%>
+	<% next_path = load_option_path(current_default.load_option.id)%>
+	<% new_constraint_path = new_vertical_constraint_path %>
+<% else %>
+	<% edit_path = edit_model_analysis_default_vertical_constraint_option_path(current_model.id, current_analysis.id, current_default.id, @vertical_constraint_option.id) %>
+	<% prev_path = model_analysis_default_fiber_option_path(current_model.id, current_analysis.id, current_default.id, current_default.fiber_option.id) %>
+	<% next_path = model_analysis_default_load_option_path(current_model.id, current_analysis.id, current_default.id, current_default.load_option.id) %>
+	<% new_constraint_path = new_model_analysis_default_vertical_constraint_option_vertical_constraint_path(current_model.id, current_analysis.id, current_default.id, @vertical_constraint_option.id)%>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Vertical Constraint Options</h3>
+			<div class="field">
+				<p>Default Vertical Connection Stiffness (alphavcdef): <%= format_value(@vertical_constraint_option.alphavcdef) %></p>
+			</div>
+			<div class="action">
+				<%= link_to "edit",edit_path %>
+			</div>
+			<h4 class="sub-header">Specific Vertical Constraint</h4>
+			<%= button_to "New", new_constraint_path, :method => :get %>
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+			                <th>X Coordinate</th>
+							<th>Y Coordinate</th>
+							<th>Z Coordinate</th>
+							<th>AlphaVC</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% @vertical_constraint_option.vertical_constraint.each do |vc| %>
+							<% if params[:analysis_id] == nil %>
+								<% edit_constraint_path = edit_vertical_constraint_path(vc.id) %>
+								<% delete_constraint_path = vertical_constraint_path(vc.id) %>
+							<% else %>
+								<% edit_constraint_path = edit_model_analysis_default_vertical_constraint_option_vertical_constraint_path(current_model.id, current_analysis.id, current_default.id, @vertical_constraint_option.id, vc.id) %>
+								<% delete_constraint_path = model_analysis_default_vertical_constraint_option_vertical_constraint_path(current_model.id, current_analysis.id, current_default.id, @vertical_constraint_option.id, vc.id)%>
+							<% end %>
+							<tr>
+			                	<td><%= vc.x %></td>
+								<td><%= vc.y %></td>
+								<td><%= vc.z %></td>
+								<td><%= vc.alphavc %></td>
+								<td><%= button_to "Edit", edit_constraint_path, :method => :get %></td>
+								<td><%= button_to "Delete", delete_constraint_path, method: :delete %></td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+
+				<%= button_to "Previous", prev_path, :method => :get%>
+				<%= button_to "Next", next_path, :method => :get%>
+			</div>
+		</div>
+	</div> 
+</div>

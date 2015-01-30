@@ -1,0 +1,31 @@
+<div class="container-fluid">
+	<div class="row">
+
+		<div class="col-md-6 col-md-offset-1 main">
+			<h4>Models</h4>		
+			<div class="table-responsive">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+						</tr>
+					</thead>
+					<tbody>
+						<% @models.each do |m|%>
+							<tr>
+								<td><%= m.name %></td>
+								<td><%= button_to "View Analyses", model_path(m.id), :method => :get %></td>
+								<td><%= button_to "Delete",  model_path(m.id), :method => :delete %></td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="col-md-4 main">
+			<p>This page allows the user to view all current models.</p>
+			<li>Pressing the <b>"View Analyses"</b> button will allow the user to view a list of all analyses for a given model and provide access to the results of these analyses as well as create new analyses.
+			<li>Pressing the <b>"Delete"</b> button causes the selected model and all associated analyses and results to be perminantly deleted.</li>
+		</div>
+	</div>
+</div>
+

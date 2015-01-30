@@ -1,0 +1,81 @@
+<% if params[:analysis_id] == nil %>
+	<% edit_path = edit_foundation_node_option_path(@foundation_node_option.id) %>
+	<% prev_path = material_model_path(current_default.material_model.id)%>
+	<% new_node_path = new_foundation_node_path %>
+<% else %>
+	<% edit_path = edit_model_analysis_default_foundation_node_option_path(current_model.id, current_analysis.id, current_default.id, @foundation_node_option.id) %>
+	<% prev_path = model_analysis_default_material_model_path(current_model.id, current_analysis.id, current_default.id, current_default.material_model.id) %>
+	<% new_node_path = new_model_analysis_default_foundation_node_option_foundation_node_path(current_model.id, current_analysis.id, current_default.id, @foundation_node_option.id)%>
+<% end %>
+
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-2 sidebar">
+			<%= render :partial => "shared/nav" %>
+		</div>
+		<div class="col-md-10 col-md-offset-2 main">
+			<h3>Foundation Node Options</h3>
+			<div class="action">
+				<%= link_to "edit", edit_path %>
+			</div>
+			<h4>Default Foundation Node</h4>
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+			                <th>Post-Yield Stiffness Ratio for Foundation Springs (ALP)</th>
+			                <th>Yield Strength of Horizontal Spring (STRH)</th>
+							<th>Yield Strength of Vertical Spring in Upward Direction (STRVU)</th>
+							<th>Yield Strength of Vertical Spring in Downward Direction (STRVD)
+			            </tr>
+			        </thead>
+			        <tbody>
+						<tr>
+			                <td><%= @foundation_node_option.ALP %></td>
+							<td><%= @foundation_node_option.STRH %></td>
+							<td><%= @foundation_node_option.STRVU %></td>
+							<td><%= @foundation_node_option.STRVD %></td>
+			            </tr>
+			        </tbody>
+			    </table>
+			</div>
+			
+			<h4>Specific Foundation Nodes</h4>
+			<%= button_to "New", new_node_path, :method => :get %>
+			<div class="table-responsive">
+				<table class="table table-striped">
+			    	<thead>
+						<tr>
+							<th>ETABS Spring Element Name
+			                <th>Post-Yield Stiffness Ratio for Foundation Springs (ALP)</th>
+			                <th>Yield Strength of Horizontal Spring (STRH)</th>
+							<th>Yield Strength of Vertical Spring in Upward Direction (STRVU)</th>
+							<th>Yield Strength of Vertical Spring in Downward Direction (STRVD)
+			            </tr>
+			        </thead>
+			        <tbody>
+						<% @foundation_node_option.foundation_nodes.each do |fn| %>
+							<% if params[:analysis_id] == nil %>
+								<% edit_node_path = edit_foundation_node_path(fn.id) %>
+								<% delete_node_path = foundation_node_path(fn.id) %>								
+							<% else %>
+								<% edit_node_path = edit_model_analysis_default_foundation_node_option_foundation_node_path(current_model.id, current_analysis.id, current_default.id, @foundation_node_option.id, fn.id) %>
+								<% delete_node_path = model_analysis_default_foundation_node_option_foundation_node_path(current_model.id, current_analysis.id, current_default.id, @foundation_node_option.id, fn.id) %>
+							<% end%>
+							<tr>
+			                	<td><%= fn.name %></td>
+								<td><%= fn.ALP %></td>
+								<td><%= fn.STRH %></td>
+								<td><%= fn.STRVU %></td>
+								<td><%= fn.STRVD %></td>
+								<td><%= button_to "Edit", edit_node_path, :method => :get %></td>
+								<td><%= button_to "Delete", delete_node_path, method: :delete %></td>
+			                </tr>
+			            <% end %>
+			        </tbody>
+			    </table>
+			</div>
+			<%= button_to "Previous", prev_path, :method => :get%>
+		</div>
+	</div> 
+</div>

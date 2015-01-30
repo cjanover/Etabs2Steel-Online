@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  eec: 1.5
+  nsefbc: 1
+  nsefbr: 1
+  milf: 1
+
+two:
+  user_id: 1
+  eec: 1.5
+  nsefbc: 1
+  nsefbr: 1
+  milf: 1

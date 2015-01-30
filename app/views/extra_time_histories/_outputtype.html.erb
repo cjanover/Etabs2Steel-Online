@@ -1,0 +1,25 @@
+
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Output Type</th>
+				<th>Select</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Nodal Response History</td>
+				<td><%= radio_button("extra_time_history", :outputtype, "1") %></td>
+			</tr>
+			<tr>
+				<td>Panel Zone History</td>
+				<td><%= radio_button("extra_time_history", :outputtype, "2") %></td>
+			</tr>
+			<tr>
+				<td>Beam/Column/Brace Element History</td>
+				<td><%= radio_button("extra_time_history", :outputtype, "3") %></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
