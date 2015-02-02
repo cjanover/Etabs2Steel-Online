@@ -1,7 +1,7 @@
 require 'fileutils'
 
 class ModelsController < ApplicationController
-  before_action :authenticate, except: [:index, :show]
+  before_action :authenticate
 
   # GET /models
   # GET /models.json

@@ -1,4 +1,6 @@
-
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 <div class="Manual">
 <section id="Introduction" class = "group">
 	<h3>Introduction</h3>
@@ -114,12 +116,399 @@
 
 <section id="Etabs2SteelConfigurationFile" class = "group">
 	<h3>Etabs2Steel Configuration File</h3>
+	<p>In order for Etabs2Steel to convert the ETABS .e2k file into the STEEL input file several options in a configuration file must be set. Comments can be made in the Configuration file by utilizing a ‘%’ before any text the user wants the parser to ignore. Each configuration option is preceded by a tag inside of brackets (i.e. [ExTH]). The order of the tags does not matter, however, it is recommended that the user does not alter the order. Each input to the configuration file will now be gone through and explained.</p>
+		
+		<b id="section-title">Program Output Information</b>
+		<ul>
+			<li><b>[DEBUG]</b> – Toggle to enable or disable debug output (yes or no)</li>
+				<ul>
+					<li>Currently not implemented</li>
+				</ul>
+			<li><b>[SECTIONCONVERSION]</b> – Toggle to enable or disable output of section conversion table (yes or no)</li>
+			<li><b>[MATERIALCONVERSION]</b> – Toggle to enable or disable output of material conversion table (yes or no)</li>
+		</ul>
+		<b id="section-title">Model Information</b>
+		<ul>
+			<li><b>[TITLE]</b> – Title of the model (Name output data will saved as)</li>
+			<li><b>[SAVELOC]</b> – Location where input and output files will be saved do (don’t include trailing / in directory)</li>
+			<li><b>[ETABSTITLE]</b> – Title of ETABS file (Name of .e2k file to be read from)</li>
+			<li><b>[ETABSLOC]</b> – Location of ETABS input file (don’t include trailing / in directory)</li>
+			<li><b>[PRIMARYETABSDIR]</b> – Direction in the ETABS model to use as the Primary Direction</li>
+			<li><b>[STEELSECTION]</b> – Section Database</li>
+		</ul>
+		<b id="section-title">Analysis Options</b>
+		<ul>
+			<li><b>[MTP]</b> – Maximum number of turning points in Hysteretic Models (suggested minimum of 20)</li>
+			<li><b>[NDIM]</b> – Maximum number of turning point locations (suggested minimum of 100000)</li>
+			<li><b>[NSS]</b> – Number of static load steps</li>
+			<li><b>[BETA]</b> – Newmark Integration Parameter</li>
+				<ul>
+					<li>0 = Central Difference</li> 
+					<li>0.25 = Constant Average</li> 
+					<li>0.166 = Linear Average</li> 
+				</ul>
+			<li><b>[GAMA]</b> – Newmark Integration Parameter (0.5)</li>
+			<li><b>[A0]</b> – Damping Parameter for Rayleigh Damping (C = A0*M + A1*K)</li> 
+				<ul>
+					<li>Assumed to be 0 when using special columns to model damping</li>
+					<li>See Sections 5.4 and 5.6 for more information on damping</li>
+				</ul>
+			<li><b>[FIRSTMODEPERIOD]</b> – Period of the first mode of the structure</li>
+				<ul>
+					<li>If left blank program assumes T = 0.1*N where N is the number of stories</li>
+				</ul>
+			<li><b>[DAMPINGRATIOSTIFF]</b> – Stiffness proportional Rayleigh damping value</li>
+				<ul>
+					<li>Used to calculate A1 via: </li>
+						$$
+							V_a=2*\frac{\eta_k}{\omega_1}
+						$$
+						$$
+							A1=2*\frac{{\xi}_k}{{\omega}_1}
+						$$
+				</ul>
+				<ul>
+					<li>Where \(ω_1\) found via <b>[FIRSTMODEPERIOD]</b></li>
+					<li>Assumed to be 0.005 when using special columns to model damping</li>
+				</ul>
+			<li><b>[DAMPINGRATIOCOL]</b> – Damping ratio of columns for calculation of A2.</li>
+				 <ul>
+					 <li>See Section 5.6 for explanation of on how damping via special columns is calculated.</li>
+				</ul>
+			<li><b>[BASESHEARPERCENT]</b> – Base Shear Percent</li>
+				<ul>
+					<li>Percent used to calculate A2 via the equation</li>
+						$$
+							A2=Percent*R*Drift*\frac{{\omega}_n}{2*{\xi}_{nc}}
+						$$
+				</ul>	
+				<ul>
+					<li>See Section 5.6 for more explanation</li>
+					<li>Default value is 0.1 </li>
+				</ul>
+			<li><b>[BASESHEAR]</b> – Pushover base shear used in calculation of damping.</li>
+				<ul>
+					<li>See Section 5.6 on page 26 for more explanation</li>
+				</ul>
+			<li><b>[R]</b> – Ratio between \(F_{push}\) and \(F_{eq-des}\) </li>
+				$$
+					\frac{F_{push}}{F_{eq-des}}
+				$$
+				<ul>
+					<li>Must run pushover analysis to determine ratio </li>
+					<li>2.5 is good starting value</li>
+				</ul>
+			<li><b>[BASEDRIFT]</b> – Drift of the base floor.</li>
+				<ul>
+					<li>Should use ETABS model to determine quantity</li>
+					<li>Default is \(\frac{1}{400}\)Story_Height</li>
+				</ul>
+			<li><b>[IRINT]</b> – Output Interval for response time histories on unit 8</li>
+				<ul>
+					<li>1 means every step</li>
+					<li>2 means every other</li>
+					<li>Etc.</li>
+				</ul>
+			<li><b>[IROUT]</b> – Toggle to also output response time histories to unit 4 </li>
+				<ul>
+					<li>1 = yes</li> 
+					<li>0 = no</li>
+				</ul>
+		 	<li><b>[SEED]</b> – Seed for random failure analysis.</li>
+			 	<ul>
+					<li>No longer used.</li>
+					<li>See Section 8.4.6 for information on how to setup this input parameter for non-PBS implentation.</li>
+				</ul>
+		</ul>
+		
+		
+		<b id="section-title">Convergence Options</b>
+		<li><b>[MIG]</b> – Maximum number of global iterations (default of 20)</li>
+		<li><b>[TOL1]</b> – Force tolerance for global iterations (default of 0.2)</li>
+		<li><b>[TOL3]</b> – Moment tolerance for global iterations (default of 0.2)</li>
+		<li><b>[TOL5]</b> – Force tolerance for local iterations (default of 2.0)</li>
+		<li><b>[TOL7]</b> – Moment tolerance for local iterations (default of 1.0)</li>
+		<li><b>[ALPHAC]</b> – Connection element stiffness</li>
+			<ul>
+				<li>For more information on recommended values see Section 5.1 on page 22</li>
+			</ul>
+		<li><b>[A3]</b> – Multiplier of yield strength of floor-to-floor springs to give yield strength of floor-to-floor shear dampers</li>
+			<ul>
+				<li>For more information on recommended values see Section 5.6 on page 26</li>
+			</ul>
+		<b id="section-title">Vertical Constraint Options</b>
+		<li><b>[ALPHAVC]</b> – Specific stiffness for vertical connection elements</li>
+			<ul>
+				<li>Input of the form [ALPHAVC] (x, y, z) alphavc</li>
+				<ul>
+					<li>Where (x, y, z) are the ETABS coordinates of the node where the property should be applied</li>
+					<li>Alphavc is the vertical connection stiffness to be applied to nodes which occupy the coordinates given</li>
+				</ul>
+			</ul>
+		<li><b>[ALPHAVCDEF]</b> – Default stiffness for vertical connection elements</li>
+			<ul>
+				<li>For more information on recommended values see Section 5.2</li>
+			</ul>
+		<b id="section-title">Fiber Options</b>
+		<li><b>[EEC]</b> – Axial Load Eccentricity factor for braces</li>
+			<ul>
+				<li>For more information see Section 5.14 on page 29</li>
+			</ul>
+		<li><b>[NSEFBC]</b> – Number of fiber segments for beams or columns (use 8)</li>
+		<li><b>[NSEFBR]</b> – Number of fiber segments for braces (use 7)</li>
+		<li><b>[MILF]</b> – Maximum number of element iterations (use 20)</li>
+		
+		<b id="seciton-title">Load Options</b>
+		<li><b>[LOADCOMBO]</b> – Name of ETABS load combination to use for loads on STEEL model</li>
+			<ul>
+				<li>Do not use combinations of combinations</li>
+			</ul>
+		<li><b>[MASSCOMBO]</b> – Name of ETABS load combination to use for mass on STEEL model</li>
+			<ul>
+				<li>Do not use combinations of combinations</li>
+			</ul>
+		
+		<b id="section-title">Extra Response Time Histories</b>
+		<li><b>[PlotAll]</b> – Toggle to automatically output all nodes’ X and Y displacement for all time steps</li>
+			<ul>
+				<li>1 = yes</li> 
+				<li>0 = no</li>
+			</ul>
+		<li><b>[PlotSecondary]</b> – Toggle to output secondary nodes</li>
+			<ul>
+				<li>1 = yes</li>
+				<li>0 = no</li>
+				<li>If enabled, Etabs2Steel will search through secondary nodes to find any nodes that occupy same coordinates as any nodal response 					time history requested.</li>
+			</ul>
+			 
+		<li><b>[ExTH]</b> – Request specific response time history to be given</li>
+			<ul>
+				<li>For examples see attached sample Etabs2Steel configuration file in Section 6.3 on page 36.</li>
+				<li>Input of the form [ExTH] (x1, y1, z1) (x2, y2, z2) OutputType OutputVale</li>
+				<ul>						
+					<li>Where:</li>
+					<ul>
+						<li>(x1, y1, z1) are the ETABS coordinates of the first node for the time history (required)</li>
+						<li>(x2, y2, z2) are the ETABS coordinates of the second node for the time history (required for element based output)</li>
+						<li>OutputType:</li>
+						<ul>
+							<li>1 = Nodal Response History</li>
+							<ul>
+								<li>OutputValue:</li>
+								<ul>
+									<li>1 = STEEL X direction</li>
+									<li>2 = STEEL Y direction</li>
+									<li>3 = Beam rotation</li>
+									<li>4 = Column rotation</li>		
+								</ul>
+							</ul>
+							<li>2 = Panel Zone History</li>
+							<ul>
+								<li>OutputValue:</li>
+								<ul>
+									<li>1 = Panel Zone Moment</li>
+									<li>2 = Panel Zone Plastic Moment</li>
+									<li>3 = Beam/Column/Brace Element History</li>
+								</ul>
+							</ul>
+							<li>3 = Beam / Column / Brace Element History</li>
+							<ul>
+								<li>OutputValue:</li>
+								<ul>
+									<li>1 = Moment at Node 1</li>
+									<li>2 = Moment at Node 2</li>
+									<li>3 = Plastic Rotation at Node 1</li>
+									<li>4 = Plastic Rotation at Node 2</li>
+									<li>5 = Axial Force in Element</li>
+									<li>6 = Plastic Axial Displacement in Element</li>
+								</ul>
+							</ul>
+						</ul>
+					</ul>
+				</ul>
+			</ul>
+
+
+		<b id="section-title">Material Models</b>
+		<li><b>[SteelMat]</b> – Shear Modulus of Steel and Shear Yield Stress of Steel in the form of</li>
+		<li><b>[SteelMat]</b> G \(\tau_y\)</li>
+		<li><b>[DefWallShearMod]</b> – Default shear modulus to use for Basement Wall Elements</li>
+		<li><b>[NumMaterial]</b> – Number of STEEL material models (must be 2)</li>
+		<li><b>[MAT]</b> – STEEL steel Material definition</li>
+			<ul>
+				<li>Input of the form: <b>[MAT]</b> E ES SIGY SIGU EPSS EPSU PRAT RES
+				<ul>
+					<li>E = Young’s modulus for material I for beam/column/brace elements</li>
+					<li>ES = Initial strain hardening modulus for material I for beam/column/brace elements</li>
+					<li>SIGY = Yield stress for material I for beam/column/brace elements</li>
+					<li>SIGU = Ultimate stress material I for beam/column/brace elements</li>
+					<li>EPSS = Strain at onset of strain hardening material I for beam/column/brace elements</li>
+					<li>EPSU = Strain at peak stress material I for beam/column/brace elements</li>
+					<li>PRAT = Poisson’s ratio material I for beam/column/brace elements</li>
+					<li>RES = Residual stress material I for beam/column/brace elements</li>
+				</ul>
+				<li>For more information see Section 2.10 on page 12</li>
+			</ul>
+		<li><b>[ConcreteMat]</b> – STEEL concrete material definition</li>
+			<ul>
+				<li>Input of the form: [ConcreteMat] MODULUS YieldStrength ConcreteStrPerc</li>
+				<li>MODULUS: Young’s Modulus of the Concrete Material</li>
+				<li>YieldStrength: Yield Strength of the Concrete Material</li>
+				<li>ConcreteStrPerc: Percentage of the concrete strength that leads to tension failure of the concrete</li>
+			</ul>
+		<li><b>[MATERIALCONV]</b> – Conversion information between ETABS materials and STEEL materials</li>
+			<ul>
+				<li>Input of the form: [MATERIALCONV] ETABS_Name STEEL_Matieral_Number</li>
+				<li>Conversions must be given for every material used.</li>
+				<li>For examples see attached sample Etabs2Steel configuration file in Section 6.3.</li>
+			</ul>
+			
+		<b id="section-title">Foundation Nodes</b>
+		<li><b>[DefFndNode]</b> – Default properties for foundation node springs.</li>
+			<ul>
+				<li>Input of the form:</li>
+				<ul>
+					<li><b>[DefFndNode]</b> ALP STRH STRVU STRVD</li>
+					<li>ALP: Post-Yield Stiffness Ratio for Foundation Springs</li>
+					<li>STRH: Yield Strength of Horizontal Spring</li>
+					<li>STRVU: Yield Strength of Vertical Spring in Upward Direction</li>
+					<li>STRVD: Yield Strength of Vertical Spring in Downward Direction</li>
+				</ul>
+			</ul>
+		<li><b>[FndNode]</b> – Specific foundation node spring definition.</li>
+			<ul>
+				<li>Input of the form:<b>[FndNode]</b> Name ALP STRH STRVU STRVD</li>
+				<ul>
+					<li>Name: Name of foundation node type (must match name of spring type in ETABS)</li>
+					<li>STRH: Yield Strength of Horizontal Spring</li>
+					<li>STRVU: Yield Strength of Vertical Spring in Upward Direction</li>
+					<li>STRVD: Yield Strength of Vertical Spring in Downward Direction</li>
+				</ul>
+			</ul>
+			
+			
+		<b id="section-title">IPC, FRAC segment lengths Beam/Col Elements</b>
+		<li><b>[FRAC-BC]</b> – Segment lengths for Beam and Column element inputs. </li>
+			<ul>	
+				<li>Input of the form: </li>
+				<ul>
+					<li>[FRAC-BC] val1 len1</li>
+					<li>[FRAC-BC] val2 len2</li>
+				</ul>
+				<li>Final row must be: [FRAC-BC] 0 0. </li>
+				<li>Default input:</li>
+				<ul>
+					<li>[FRAC-BC] 1 0.03</li>
+					<li>[FRAC-BC] 1 0.06</li>
+					<li>[FRAC-BC] 1 0.16</li>
+					<li>[FRAC-BC] 2 0.25</li>
+					<li>[FRAC-BC] 1 0.16</li>
+					<li>[FRAC-BC] 1 0.06</li>
+					<li>[FRAC-BC] 1 0.03</li>
+					<li>[FRAC-BC] 0 0</li>
+				</ul>
+			</ul>
+		<li><b>[FRAC-BR]</b> – Segment lengths for Brace elements.</li>
+			<ul>
+				<li>Input of the form:</li>
+				<ul>
+					<li>[FRAC-BR] val1 len1</li>
+					<li>[FRAC-BR] val2 len2</li>
+				</ul>
+				<li>Final row must be: [FRAC-BR] 0 0</li>
+				</li>Default Input:</li>
+				<ul>
+					<li>[FRAC-BR] 1 0.25</li>
+					<li>[FRAC-BR] 1 0.16</li>
+					<li>[FRAC-BR] 1 0.07</li>
+					<li>[FRAC-BR] 1 0.04</li>
+					<li>[FRAC-BR] 1 0.07</li>
+					<li>[FRAC-BR] 1 0.16</li>
+					<li>[FRAC-BR] 1 0.25</li>
+					<li>[FRAC-BR] 0 0</li>
+				</ul>
+			</ul>
+		
+		<b id="section-title">Ground Acceleration Multiplier</b>
+		<li><b>[GAMULT]</b> – Scale factor used for ground acceleration input. </li>
 </section>
 
 <section id="PostProcessingTools" class = "group">
 	<h3>Post Processing Tools</h3>
+	<p>There are currently a limited number of post processing tools that can be used to help visualize the results. As time goes on, more post processing tools will be made and will be updated here.</p>
+
 	<div id="PostProcessingTools_LoadData" class="subgroup">
 		<h4>Load Data</h4>
+		<p>LoadData is a Matlab script that parses through the for004 output file and stores all relevant data in a saved matlab workspace so other functions can quickly use the data</p>
+		<div class="div-matlab-code">
+			<p class="matlab-code"></p>
+			<p class="matlab-code">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</p>
+			<p class="matlab-code">%%%%        Load Model      %%%%</p>
+			<p class="matlab-code">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</p>
+			<p class="matlab-code">%This file must be run first. It loads the for004 file and parses all of</p>
+			<p class="matlab-code">%the information. Temporary files are stored in the working directory.</p>
+			<p class="matlab-code">warning off</p>
+			<p class="matlab-code">clear</p>
+			<p class="matlab-code">clc</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">workdir = '/Users/Chris/Desktop/rwg-shakeout1.2.0-sk0001';    %Path to for004</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">%Remove existing files</p>
+			<p class="matlab-code">delete([workdir,'/ModelInfo.mat']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">delete([workdir,'/BEAM']);</p>
+			<p class="matlab-code">delete([workdir,'/COORD']);</p>
+			<p class="matlab-code">delete([workdir,'/BEL']);</p>
+			<p class="matlab-code">delete([workdir,'/THINFO']);</p>
+			<p class="matlab-code">delete([workdir,'/FndNode']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">%Parse NNP, NEL, NBEL, NNPFN</p>
+			<p class="matlab-code">unix(['awk ''/NNP =/ {print $NF}'' ', workdir,'/for004 > ',workdir,'/junk']);  % Get the last field ofwhich contains 'NEL';</p>
+			<p class="matlab-code">NNP=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['awk ''/ NEL =/ {print $NF}'' ', workdir,'/for004 > ',workdir,'/junk']);  % Get the last field ofwhich contains 'NEL';</p>
+			<p class="matlab-code">NEL=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['awk ''/ NBEL =/ {print $NF}'' ', workdir,'/for004 > ',workdir,'/junk']);  % Get the last field ofwhich contains 'NEL';</p>
+			<p class="matlab-code">NBEL=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['awk ''/ NNPFN =/ {print $NF}'' ', workdir,'/for004 > ',workdir,'/junk']);  % Get the last field ofwhich contains 'NEL';</p>
+			<p class="matlab-code">NNPFN=load([workdir,'/junk']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">%Parse original coordinates, elements, basement elements, foundation nodes</p>
+			<p class="matlab-code">unix(['grep -n "NODE        XCOOR        YCOOR" ',workdir,'/for004 | cut -f1 -d: > ',workdir,'/junk']);</p>
+			<p class="matlab-code">title_line=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['sed -n ',num2str(title_line+1),',',num2str(title_line+1+NNP),'p ',workdir,'/for004 > 	',workdir,'/COORD']);</p>
+			<p class="matlab-code">COORD=load([workdir,'/COORD']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">unix(['grep -n "ELEM MEM  MAT     ISS" ',workdir,'/for004 | cut -f1 -d: > ',workdir,'/junk']);</p>
+			<p class="matlab-code">title_line=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['sed -n ',num2str(title_line+1),',',num2str(title_line+1+NEL),'p ',workdir,'/for004 > ',workdir,'/BEAM']);</p>
+			<p class="matlab-code">BEAM=load([workdir,'/BEAM']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">unix(['grep -n "BASEMENT ELEMENT INFORMATION" ',workdir,'/for004 | cut -f1 -d: > ',workdir,'/junk']);</p>
+			<p class="matlab-code">title_line=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['sed -n ',num2str(title_line+2),',',num2str(title_line+2+NBEL),'p ',workdir,'/for004 > ',workdir,'/BEL']);</p>
+			<p class="matlab-code">BEL=load([workdir,'/BEL']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">unix(['grep -n "     FOUNDATION ELEMENT INFORMATION" ',workdir,'/for004 | cut -f1 -d: > ',workdir,'/junk']);</p>
+			<p class="matlab-code">title_line=load([workdir,'/junk']);</p>
+			<p class="matlab-code">unix(['sed -n ',num2str(title_line+2),',',num2str(title_line+2+NNPFN),'p ',workdir,'/for004 > ',workdir,'/FndNode']);</p>
+			<p class="matlab-code">FndNode=load([workdir,'/FndNode']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">%Clean up directory</p>
+			<p class="matlab-code">delete([workdir,'/BEAM']);</p>
+			<p class="matlab-code">delete([workdir,'/COORD']);</p>
+			<p class="matlab-code">delete([workdir,'/BEL']);</p>
+			<p class="matlab-code">delete([workdir,'/THINFO']);</p>
+			<p class="matlab-code">delete([workdir,'/FndNode']);</p>
+			<p class="matlab-code">delete([workdir,'/junk']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">%Save all information to workdir</p>
+			<p class="matlab-code">save([pwd,'/workdir']);</p>
+			<p class="matlab-code"></p>
+			<p class="matlab-code">save([workdir,'/ModelInfo'],'NNP', 'NEL', 'NBEL', 'NNPFN', 'COORD', 'BEAM', 'BEL', 'FndNode');</p>
+		</div>
 	</div>
 	<div id="PostProcessingTools_PlotUndeformedShape" class="subgroup">
 		<h4>Plot Undeformed Shape</h4>
@@ -131,82 +520,415 @@
 
 <section id="Commentary" class = "group">
 	<h3>Commentary</h3>
+	<p>In this section the assumptions, reasoning, and mathematics as well as the inner-workings of Etabs2Steel are discussed to give the user a better understanding of how both the conversion software and STEEL operate thereby allowing for less errors and user modification.</p>
 	<div id="Commentary_Diaphragms" class="subgroup">
 		<h4>Diaphgragms</h4>
+		<p>Diaphragms in STEEL behave slightly differently than in ETABS. In ETABS when a rigid diaphragm is assigned to a set of nodes the solver enforces horizontal compatibility between all nodes on the diaphragm. In STEEL diaphragms act to enforce horizontal compatibility between the nodes on given frames via the penalty element method where the penalty is the inputted diaphragm stiffness. An image showing how diaphragms constrain nodes can be seen in Figure 5 1.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-1 Diaphragm", width: "300"%>
+		
+		<p>This image shows that the first diaphragm will work to enforce compatibility between nodes on the left most frame (nodes 8 through 11) and middle frame (nodes 25 through 29) while the second diaphragm will work to enforce compatibility between nodes on the middle frame (nodes 25 through 29) and the right most frame (nodes 45 through 49). The stiffness of this diaphragm, defined by ALPHAC, is constant among all diaphragms in the model and should be given a value representative of the shear stiffness of the slab and decking system between connected frames. For an analysis conduct in the units of kN, m a stiffness of 6.9E8 would represent an “infinitely” stiff diaphragm</p>
+		<p>The important difference between the behavior of ETABS and STEEL diaphragms is that STEEL diaphragms will allow for strain between nodes in a given frame while ETABS rigid diaphragms will not. The STEEL diaphragm will take the average of the nodal displacements each connected frame and will apply a constraining equation to the stiffness matrix according to the given weighting function. If an extremely large ALPHAC value is given then the average displacement between the two connected frames will be identical.</p>
+		<p>Etabs2Steel creates diaphragms automatically by searching for nodes that lie on the intersection of both primary and secondary gridlines. Since the number of nodes on each frame of a diaphragm needs to be constant throughout the model restraints need to be placed on irregularity of structures modeled, namely the number of nodes that land on the intersection of primary and secondary gridlines needs to be constant throughout the building in the primary direction. Nodes that land in between gridlines are ignored, allowing for changing in bracing configuration along the height of the building.</p>
+		<p>It is also of note that diaphragms are only created in the primary direction. For more information on how STEEL parses diaphragms please see the description of the for001 input file in Section 6.1 on page 13.</p>
+		
 	</div>
 	<div id="Commentary_VerticalConnectionElements" class="subgroup">
 		<h4>Vertical Connection Elements</h4>
+		<p>Etabs2Steel has the ability to convert the 3D ETABS models to a “2.5D” Steel model that carries vertical compatibility between nodes on intersecting frames. This is achieved through STEEL’s vertical connection element that acts like a spring between nodes carrying only axial load. A visualization of the way Etabs2Steel rearranges a 3D ETABS model can be seen in Figure 5 2 and Figure 5 3.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-2 - CoreNVCON", width: "300"%>
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-3 - OUTRIGGER NVCON", width: "300"%>
+		
+		<p>When Etabs2Steel is creating the secondary brace lines a new set of nodes are created which occupy the same ETABS coordinates as those in the primary direction. Etabs2Steel finds these secondary nodes and automatically creates a vertical connection element constraining them to their original, primary, node. The arrows in the previous figure represent these connections. These vertical connection elements each can be assigned a stiffness that will adjust how strictly the vertical displacement compatibility between the two attached nodes is enforced. </p>
+		<p>It important for the user to realize that these elements do not allow the passing of anything other than vertical forces via a linear spring with a given stiffness and as a result will fail to capture 3D effects such as torsion or biaxial bending. However, for symmetric structures loading uniformly the results of these constraints have been shown to provide accurate results.</p>
+		<p>To provide an example stiffness, for an analyses in the units of kN,m a vertical connection element stiffness of  6.9e8 would represent an “infinitely” stiff vertical connection.</p>
 	</div>
 	<div id="Commentary_ModelingOfSecondaryFrames" class="subgroup">
 		<h4>Modeling of Secondary Frames</h4>
+		<p>In order to obtain the proper mass in the STEEL model for purposes of dynamic analysis the columns are generally only placed in the primary frames. Therefore, to ensure stability in the model the left most node of every floor in every secondary frame is restrained with a vertical roller as shown in Figure 5 4. This prevents the secondary frames from translating horizontally while still allowing them to deflect vertically. Additionally, since this restraint is placed only on one side of the secondary frame all other nodes will be able to strain horizontally. While this may be source of computational error, the secondary frames do not strain horizontally significantly when the structure is loaded symmetrically in the primary direction meaning any error associated with this assumption will be minimal. </p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-4 Vertical Rollers", width: "300"%>
 	</div>
 	<div id="Commentary_RayleighDamping" class="subgroup">
 		<h4>Rayleigh Damping</h4>
+		<p>The creator of STEEL, Professor John Hall, wrote a paper in which he describes some possible unintended consequences of using Rayleigh damping in large displacement non-linear dynamic models [3]. As a result, Rayleigh damping is used only to ensure entries in the stiffness matrix are non-zero. It is common practice in STEEL to instead implement damping via special columns, which is discussed in Section 5.5. </p>
+		<p>When editing the Etabs2Steel configuration file the mass proportional damping multiplier A0 is given a value of 0 and the stiffness proportional damping multiplier A1 is given a value of \(\frac{2\xi_1}{\omega_1}  where \(\xi_1\) is a small value such as 0.005 and \(\omega_1\) is the fundamental frequency of the building in rad/s.</p>
 	</div>
 	<div id="Commentary_Releases" class="subgroup">
 		<h4>Releases</h4>
+		<p>Since STEEL uses fiber based elements creating pinned connections is not as straightforward as in ETABS. To simulate the release of moments at the end of elements special fiber properties need to be assigned. STEEL accomplishes this through the use of fiber area categories in which specific fibers in specific sections of an element can have their areas increased or decreased by a certain percentage. An image describing the number of fibers per element for beams, columns and braces can be seen in Figure 5 4, while an image describing the default segment breakdown for beams, columns and braces can be seen in Figure 5 5.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-3 Beam/Col Fiber Segment", width: "300"%>
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-5 Fiber Layout", width: "300"%>
+		
+		<p>Currently, when creating a fixed-fixed connection on a beam element the web of the first two and last two segments are reduced to 30% of their original area. More information on this can be found in [4].</p>
+		<p>Creating a pinned connection in STEEL is slightly more complicated. The fibers modifications need to minimize the inertia of the section as much as possible while still allowing the section to generate its full capacity. The inertia is reduced by eliminating the flanges and the top and bottom fibers of the web while the capacity of the section was preserved by increasing the area of the middle two fibers of the web. For example, if a beam had its left end pinned and its right end fixed segments 1 and 2 fibers 1,2,7 and 8 would have an area modifier of 0 to eliminate the flanges, fibers 3 and 6 would have an area modifier of 0 to eliminate the top and bottom fibers of the web and fibers 4 and 5 would have their area modifier set to a value such that the axial capacity of the section remains roughly constant.</p>
+		<p>While it would be possible to have exact modifiers for every possible section, the increase to the size of the input file was deemed to be not worthwhile as each section would require 3 premade fiber area modification categories; namely for pinned-pinned elements, pined-fixed elements, and fixed-pinned elements. Instead, only beam sections greater than 18” but less than 36” in depth were chosen as the most common beam sections and an appropriate modifier was chosen which best represented all beams in this range.</p>
+		<p>To calculate the area modifier an equivalent area was calculated by first determining the height of the web via,</p>
+		$$
+			h_{web}=d-2t_f
+		$$
+		<p>Where d is the depth of the beam and t_f is the thickness of the flange. Since the new modified cross-section has its flanges eliminated with all web area condensed into two equal fibers, each fiber area can be calculated as,</p>
+		$$
+			A_{mod_fiber}=\frac{1}{2} h_{web} t_{web}=\frac{1}{2}(d-2t_{web})t_f
+		$$
+		<p>Therefore, the multiplier to the original fiber area can be found to be,</p>
+		$$
+			FAFRAC=  \frac{A_{section}}{A_{mod-fiber}} [5]
+		$$
+		<p>where FAFRAC is the multiplier for the middle two fibers and A_section is the area of the original section. </p>
+		<p>Following this calculation for all reasonable beams in the desired range gave a maximum and mininum multiplier of 7.17 and 3.63, an average multiplier of 5.4 with a standard deviation of 0.9. In most sections where the actual multiplier was far from the given average the weight of the section was such that it would be more practical to increase the depth rather than use such a heavy section. Therefore, it was then chosen to assign a fiber area modifier of 6.0 to the middle two fibers of the two segments nearest a pinned connection. Since the multiplier chosen is greater than the minimum there will be a non-conservative area for some sections types, however as drag element failure is generally not a global failure mechanism of interest in lateral analysis the error should not be significant. However, if the user wishes additional area modification categories can be created to achieve a more accurate representation of pinned connections. </p>
+		<p>It was decided that beams which are fixed-pinned or pinned-fixed would be given no modifications on the fibers of the fixed end since, at this stage in the analysis, this element fixity type only occurs when the beam is meshed at the intersection point of a brace. Since there is continuity of the element over this connection reducing the area of the fibers at this location would be incorrect. However, this does mean that modeling a fixed-pinned or pinned-fixed beam that spanned between a moment frame and a brace frame would result in a non-conservative response, therefore, as of the current version the user should take care to avoid these situations and simply span the space between these types of systems with a pinned-pinned beam.</p>
+		<p>Element fiber categories for braces are done automatically and can be given a fiber modification category of 0. Similarly, all column elements are given a fiber modification category of 0.</p>
+		<p>A description of every release type available is shown in Table 1. Note that some of the release types are out of date and are unused, namely the column releases as it was determined that pinning columns can result in large computational errors. The user may either create their own release definitions using these as a guide by editing the for001 file or customize the current element definitions utilizing the existing element fiber area modification categories.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-4 Element Releases", width: "300"%>
+		
 	</div>
 	<div id="Commentary_DampingSpecialColumns" class="subgroup">
 		<h4>Damping / Special Columns</h4>
+		<p>According to Professor John Hall at the California Institute of Technology utilizing linear stiffness and mass proportional damping yields unrealistically large damping at height velocities [3] and therefore a “capped” damping force was implemented in STEEL utilizing elasto-plastic dashpots with a controllable maximum force value. This maximum force value is determined by first calculating the peak base shear of the structural (Uniform Building Code) through a pushover analysis and capping the damping for to 10% of this peak value [3]. This peak force is than distributed uniformly over the height of a structure with the peak occurring at the top of the first floor and 7% of the capped shear applied at the roof as per UBC 97 [6]. The story shear at each floor is than found via linear interpolation. An image demonstrating this distribution can be seen in Figure 5 4.</p>
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-5 Story Shear", width: "300"%>
+		
+		<p>Etabs2Steel calculates the values of minEle, maxEle and HS automatically while the base shear quantity (BS) is inputted via the Etabs2Steel configuration file under the tag [BASESHEAR] </p>
+		<p>Each column on every floor is assigned a non-linear elasto-plastic damper with a capping force equal to the story shear divided by the number of columns on the given floor representing the maximum damping force which can be applied at that location. </p>
+		<p>Additionally, a capping velocity must also be given to represent the velocity at which the damper will yield. This value is found by first assuming proportional damping exists in the structure, namely,</p>
+		$$
+			C_n=\phi_n^T*(a_k*K)*\phi_n=a_n*K_n
+		$$
+		<p>since K_n=\omega_n^2*M_n this equation can be rewritten as,</p>
+		$$
+			C_n=a_n*\omega_n^2*M_n
+		$$
+		<p>yielding,</p>
+		$$
+			\zeta_n=C_n/(2M_n*\omega_n )=(a_n*\omega_n^2*M_n)/(2M_n*\omega_n )=(a_k*\omega_n)/2
+		$$
+		<p>Meaning that the stiffness proportional damping coefficient for a given damping ratio at a particular frequency is given by,</p>
+		$$
+			a_k=(2\zeta_n)/\omega_n 
+		$$
+		<p>Following this, a “stiffness” term is introduced which acts to limit story shear to L/400 and is defined as follows,</p>
+		$$
+			Stiffness=  \frac{F_{EQ-Des}}{\frac{L}{400}*StoryHeight}
+		$$
+		<p>where \(F_{EQ-Des}\) is the design seismic shear over the height. Now, the coefficient for the damping ratio at a particular frequency can be related to this stiffness term as follows,</p>
+		$$
+			a_k*k*v_{rel-max} = Max Damping Force=  \frac{2\zeta_n}{\omega_n}*\frac{F_{EQ_{Des}}}{\frac{L}{400}*StoryHeight}*v_{rel_{max}}=F_{Push}
+		$$
+		<p>However, as discussed earlier, this maximum damping force is limited to 10% of the distribution force of the pushover strength as per Hall. Therefore,</p>
+		$$
+			F_{D_{max}}=0.1F_{Push}=0.1 \frac{2\zeta_n}{\omega_n}*\frac{F_{EQ_Des}}{\frac{L}{400}*StoryHeight}*v_{rel_max}
+		$$
+		<p>meaning, </p>
+		$$
+			v_{rel_max}=\frac{F_{Push}}{F_{EQ_Des}}*\frac{L}{400}*StoryHeight*\frac{\omega_n}{2\zeta_n} [5]
+		$$
+		<p>In terms of Etabs2Steel configuration file input, this equation can be rewritten as,</p>
+		$$
+			v_{rel_max}=[BASESHEARPERCENT]*[R]*[BASEDRIFT]*\frac{\frac{2π}{[FIRSTMODEPERIOD]}}{2*[DAMPINGRATIOSTIFF]}
+		$$
+		<p>where,</p>
+		<ul>
+			<li>[BASESHEARPERCENT]=0.1</li>
+			<li>\([R]=\frac{F_{Push}}{F_{EQ-Des}} \)</li>
+			<li>[BASEDRIFT]=\(\frac{L}{400}*StoryHeight\)</li>
+			<li>[FIRSTMODEPERIOD]=\(\frac{2π}{\omega_n}\)</li> 
+			<li>[DAMPINGRATIOSTIFF]=\(\zeta_n\)</li>
+		</ul>
+		<p>Etabs2Steel then determines the number of columns per floor and creates the damper elements with the appropriate stiffness and yield qualities.</p>
+		
+		
 	</div>
 	<div id="Commentary_ElementStrongAxisWeakAxisOrientation" class="subgroup">
 		<h4>Element String Axis / Weak Axis Orientation</h4>
+		<p>ETABS and STEEL both have the ability to make any element have a strong or weak axis orientation. However, rather than import element orientation from ETABS it was decided instead to make all columns which are pinned on one end and fixed at the other weak axis, all columns which are fixed on both ends strong axis (user beware: utilizing this type of releases on columns can result in excessive vertical displacements in columns and is therefore not recommended), all braces weak axis, and all beams strong axis. This was done to reduce an order of complexity in the ETABS model, as well as provide more accurate results from the STEEL analysis.</p>
+		<p>If a column is fixed on both ends, it is assumed to be resisting a moment. Therefore, weak axis buckling is the controlling state of the element. On the other hand, if a column is pinned on one end and fixed on the other it is assumed to be functioning in a brace frame where moment capacity is not an issue. Similarly, all braces were chosen to be orientated about their weak axis since weak axis buckling will always be the controlling state of that element. Finally, strong axis orientation for beams was chosen since in practice beams are generally orientated in this manner.</p>
+		<p>If the user wishes to change the orientation of any element, simply changing the appropriate field in the for001 input file to -1 for weak axis or 1 for strong axis will cause steel to treat the element as such. Information on the for001 STEEL input file can be seen in Section 6.1.</p>
 	</div>
+	
 	<div id="Commentary_NodalMass" class="subgroup">
 		<h4>Nodal Mass</h4>
+		<p>As discussed earlier, the nodal mass is imported from the ETABS via the given load combination defined in the Etabs2Steel configuration file. The mass in the ETABS file should be given as a vertical downward force on any node where mass is required. Etabs2Steel will then take the vertical mass on each node and apply it horizontally and vertically to the STEEL nodes in the Primary Direction. No nodes in the secondary frames will be given mass as the ground motions will only be applied in the primary direction and therefore the excitement of the mass in the secondary direction is minimal. Mass can be added manually by editing the for001 file as defined in Section 6.1.</p>
 	</div>
+	
 	<div id="Commentary_Decking" class="subgroup">
 		<h4>Decking</h4>
+		<p>As discussed earlier Etabs2Steel has the ability to import slab and deck information from ETABS. However, there are currently limitations on the way the decking must be drawn in ETABS as well as limitations on how the information is imported to STEEL. In the ETABS model only one type of decking can be drawn on any given floor and it must span the entire floor.</p>
+		<p>As a result, all elements on a given floor will be given the same decking information. It is not possible to assign different types of decking on different beam elements nor is it possible to assign decking to some beam elements on a floor and no decking to other elements on the same floor. It is possible to have different types of decking properties on different floors and it is possible to have some floors with no decking.</p>
+		<p>When calculating the area for STEEL, Etabs2Steel uses the ACI 318 code maximum tributary length of 16*Slab Thickness and multiplies this value by Slab Thickness again to obtain the maximum tributary area for the slabs. To be conservative, the area of the decking is assumed to be zero as, drastically different results are possible depending on the direction the decking is running.</p>
+		<p>For more information on how STEEL works with composite action see [4].</p>
 	</div>
+	
 	<div id="Commentary_Units" class="subgroup">
 		<h4>Units</h4>
+		<p>When exporting an .e2k file from ETABS take care to record the units the file has been exported in and be sure all inputs in the Etabs2Steel configuration file are in matching units as both STEEL and Etabs2Steel have little to no automatic conversion information. Properties such as diaphragm stiffness ALPHAC and vertical connection stiffness ALPHAVC need to be scaled to achieve the desired stiffness for the given units. Inputs that are the ratio of values or strains do not need to be scaled as they are independent of units.</p>
 	</div>
+	
 	<div id="Commentary_Gravity" class="subgroup">
 		<h4>Gravity</h4>
+		<p>The STEEL for001 input AGRAV is assigned automatically based on the exported units of ETABS. The units currently understood by Etabs2Steel are inches, feet, meters, millimeters, and centimeters, although additional units can be added with little work. Furthermore, it is possible for the user to customize AGRAV manually in the for001 file, but care must be taken to ensure consistency across all inputs.</p>
 	</div>
+	
 	<div id="Commentary_PanelZones" class="subgroup">
 		<h4>PanelZones</h4>
+		<p>In STEEL panel zones exist at the intersection of columns and beams and have the option of being fixed in space, rigid, or flexible. This can be controlled by setting IDJ in the for001 input file to either 0 for fixed, 1 for rigid, or 2 for flexible.  Currently, Etabs2Steel sets all nodes on the lowest floor to have a fixed panel zone and all other nodes to have a rigid panel zone. There are plans for future versions to contain flexible panel zones if the need arises. Additionally, since a common bracing in the developer’s research is chevron bracing, special code was added for panel zones located where no column is present to shrink the panel zone as small as possible. This was done to assure proper allignement of braces and remove a potential “shear link” behavior that was unintended in the model.</p>
 	</div>
+	
 	<div id="Commentary_ElementConnectivity" class="subgroup">
 		<h4>Element Connectivity</h4>
+		<p>STEEL requires element connectivity information to be inputted in a specific order. The required orientation for beam, column and brace elements can be seen in Figure 5 7, while the required orientation for basement wall elements can be seen in Figure 5 8.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-7 Beam/Col/Brace Connectivity", width: "300"%>
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-8 Basement Wall Element Connectivity", width: "300"%>
 	</div>
+	
 	<div id="Commentary_AxislLoadEccentricity" class="subgroup">
 		<h4>Axial Load Eccentricity</h4>
+		<p>In order to encourage buckling in braces STEEL has a global setting whose value offsets all forces in braces by a set number. This value, known as EEC in the Etabs2Steel configuration file, shifts the axial force in all brace elements away from the centerline of the element by a constant value. This is visualized in Figure 5 7. With no axial load eccentricity factor every brace in the model will be aligned perfectly geometrically resulting in no initial moment in brace elements and therefore no buckling will occur. It is therefore recommended that the user input some reasonable value for this property to accurately represent real-world conditions.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-9 Axial Load Eccentricity", width: "300"%>
 	</div>
 	<div id="Commentary_NodeNumbering" class="subgroup">
 		<h4>Node Numbering</h4>
+		<p>Node numbering in Etabs2Steel has been done in such a way as to minimize the half bandwidth of slender structures. To accomplish this, Etabs2Steel sweeps through all nodes on a given floor starting with primary nodes and numbers them along the primary direction. After all nodes on a given floor have been numbered the process is repeated on each subsequent floor until every node has been numbered. The result of which is a maximum node number differential equal to roughly the maximum number of nodes on a floor. An example of the node numbering scheme for the 6 story braced frame building example can be seen in Figure 5 7. Element numbering in Etabs2Steel is done on a first-come first-serve basis and is determined by the order the user draws the elements in ETABS.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/5 - Commentary/5_4-10 Node Numbering", width: "300"%>
 	</div>
 </section>
 
 <section id="SteelInputFiles" class = "group">
 	<h3>Steel Input Files</h3>
+	<p>STEEL requires several input files, some of which are created automatically by Etabs2Steel. for001 is the main input file. It contains the model and loading information for the analysis. for002 and for003 contain the horizontal and vertical ground motions respectively and are not created by Etabs2Steel. for020 and for021 contain the section and slab material databases that are created by Etabs2Steel. Finally, the for029 file contains the random seed that STEEL uses for probabilistic material failures and is not created by Etabs2Steel.</p>
+	
 	<div id="SteelInputFiles_for001" class="subgroup">
 		<h4>for001</h4>
+		<p>The input format for the for001 input file will now be discussed allowing the user to make custom changes to the model if required. For an example of a for001 input file please see Section 5.1 on page 22, and additional information about the each input line can be seen in Section 3 on page 6.</p>
+		
+		<b>[1].	Title</b>
+		<ul>
+			<li>Title: Name of the project file</li>
+		</ul>
+		<b>[2].	NNP NEL NNPFN NBEL NCONEL NNPBF NVCONEL NSS NDS NRTH MIG NC MTP NDIM</b>
+		<ul>
+			<li>NNP: Number of nodal points</li>
+			<li>NEL: Number of beam/column/brace elements</li>
+			<li>NBEL: Number of basement wall elements</li>
+			<li>NCONEL: Number of connection elements between parallel frames</li>
+			<li>NNPBF: Number of nodal points along a floor line for each frame</li>
+			<li>NVCONEL: Number of vertical connection elements</li>
+			<li>NSS: Number of static load steps</li>
+			<li>NDS: Number of dynamic time steps</li>
+			<li>MIG: Maximum number of global iterations</li>
+			<li>NC: Number of special columns</li>
+			<li>MTP: Maximum number of turning points in the hysteretic model</li>
+			<li>NDIM: Storage parameter for turning point locations</li>
+		</ul>
+		<b>[3].	DT BETA GAMMA A0 A1 A2 A3 AGRAV TOL(1) TOL(3) TOL(5) TOL(7) ALPHAC</b>
+		<ul>
+			<li>DT: Time step for dynamic analysis</li>
+			<li>BETA: Newmark time integration parameter</li>
+			<li>GAMMA: Newmark time integration parameter</li>
+			<li>A0: Mass proportional damping multiplier</li>
+			<li>A1: Stiffness proportional damping multiplier</li>
+			<li>A2: Floor-to-floor velocity at which the shear dampers yield</li>
+			<li>A3: Multiplier of the yield strength of the floor-to-floor shear springs to give the yield strength of the floor-to-floor shear dampers</li>
+			<li>AGRAV: Acceleration due to gravity</li>
+			<li>TOL(1): Force tolerance for global iterations</li>
+			<li>TOL(3): Moment tolerance for global iterations</li>
+			<li>TOL(5): Force tolerance for local iterations</li>
+			<li>TOL(7): Moment tolerance for local iterations</li>
+			<li>ALPHAC: Connection element stiffness</li>
+		</ul>
+		<b>[4].	EEC NSEFBC NSEFBR MILF</b>
+		<ul>
+			<li>EEC: Axial load eccentricity factor for braces</li>
+			<li>NSEFBC: Number of segments for beams or columns</li>
+			<li>NSEFBR: Number of segments for a brace</li>
+			<li>MILF: Maximum number of element iterations</li>
+		</ul>
+		<b>[5].	IRINT IROUT ISTOP</b>
+		<ul>
+			<li>IRINT: Output interval for response time histories on unit 8</li>
+			<li>IROUT: Unit 4 response time history output toggle</li>
+			<li>ISTOP: Time step at which current dynamic analysis stops</li>
+		</ul>
+		<b>[6].	N C(N,1) C(N,2) ID(N,1) ID(N,2) IDJ(N) IDOUB(N) F(N,1) F(N,2) F(N,3) F(N,4) [Repeated  NNP times]</b>
+		<ul>
+			<li>N: Node number</li>
+			<li>C(N,1): X coordinate of node N</li>
+			<li>C(N,2): Y coordinate of node N</li>
+			<li>ID(N,1): X dof restraint of node N</li>
+			<li>ID(N,2): Y dof restraint of node N</li>
+			<li>IDJ(N): Panel zone restraint of node N</li>
+			<li>IDOUB(N): Panel zone thickness toggle</li>
+			<li>F(N,1): X static force at node N</li>
+			<li>F(N,2): Y static force at node N</li>
+			<li>F(N,3): X mass at node N in units of force</li>
+			<li>F(N,4): Y mass at ndoe N in units of force</li>
+		</ul>
+		<b>[7].	N MT(N) MAT(N) IOR ISS(N) ICS(N) ICT(N) LM(N,1) LM(N,2) WSCALE(N) [Repeated NEL times]</b>
+		<ul>
+			<li>N: Beam/column/brace element number</li>
+			<li>MT(N): Element Type</li>
+			<li>MAT(N): Material set number for element N</li>
+			<li>IOR: Element axis orientation</li>
+			<li>ISS(N): Steel member designator for element N</li> 
+			<li>ICS(N): Slab designator for element N</li>
+			<li>ICT(N): Category of element N for fiber area adjustment and fracture strain specification</li>
+			<li>LM(N,1) LM(N,2): Connectivity array for element N</li>
+			<li>WSCALE(N): Width multiplier for element N</li>
+		</ul>
+		<b>[8].	NCL(N) PDL(N,1) PDL(N,4) STRMULT STFMULT [Repeated NC times]</b>
+		<ul>
+			<li>NCL(N): Element number of special column N</li>
+			<li>PDL(N,1): Positive sum of gravity loads in all columns in non-modeled frames corresponding to special column N for P-Delta calculation</li>
+			<li>PDL(N,4): Reference value for strength and stiffness for the shear spring to represent portions of non-modeled frames corresponding to special column N</li>
+			<li>STRMULT: Multiplier of PDL(N,4) to give yield strength of shear spring</li>
+			<li>STFMULT: Multiplier of PDL(N,4) to give stiffness of shear spring</li>
+		</ul>
+		<b>[9].	LMF STFH(I) STFV(I) ALP STRH(I) STRVU(I) STRVD(I) [Repeated NNPFN times]</b>
+		<ul>
+			<li>LMF: Node number of foundation node I</li>
+			<li>STFH(I): Stiffness of horizontal spring attached to foundation node I</li>
+			<li>STFV(I): stiffness of vertical spring attached to foundation node I</li>
+			<li>ALP: Post-yield stiffness ratio for foundation springs</li>
+			<li>STRH(I): Yield strength of horizontal spring</li>
+			<li>STRVU(I): Yield strength of vertical spring in upward direction</li>
+			<li>STRVD(I): Yield strength of vertical spring in downward direction</li>
+		</ul>
+		<b>[10].	N HB(N) WB(N) TB(N) G(N) LMB(N,1) LMB(N,2) LMB(N,3) LMB(N,4) [Repeated NBEL times]</b>
+		<ul>
+			<li>N: Basement wall element number</li>
+			<li>HB(N): Height of basement wall element N</li>
+			<li>WB(N): Length of basement wall element N</li>
+			<li>TB(N): Thickness of basement wall element N</li>
+			<li>G(N): Shear modulus for basement wall element N</li>
+			<li>LMB(N,1) LMB(N,2) LMB(N,3) LMB(N,4): Connectivity array for basement wall element N.</li>
+		</ul>
+		<b>[11].	N (MCC1(N,J), J=1, NNPBF) (MCC2(N,J), J=1,NNPBF) [Repeated NCONEL times]</b>
+		<ul>
+			<li>N: Connection element number</li>
+			<li>MCC1(N,J),J=1,NNPBF): List of NNPBF floor nodes of the first frame to be connected to the second frame by element N</li>
+			<li>MCC2(N,J),J=2,NNPBF): List of NNPBF floor nodes of the second frame to be connected to the first frame by element N</li>
+		</ul>
+		<b>[12].	N ALPHAVC MCVC(1) MCVC(2) [Repeated NVCONEL times]</b>
+		<ul>
+			<li>N: Vertical connection element number</li>
+			<li>ALPHAVC: Vertical connection element stiffness</li>
+			<li>MCVC(1): Node 1 to be vertically connected</li>
+			<li>MCVC(2): Node 2 to be vertically connected</li>
+		</ul>
+		<b>[13].	IR IDRTH(IR,1) IDRTH(IR,2) IDRTH(IR,3) IDRTH(IR,4) IDRTH(IR,5) IDRTH(IR,6) [Repeated NRTH times]</b>
+		<ul>
+			<li>IR: Time history number</li>
+			<li>IDRTH(IR,1): Node number of history IR</li>
+			<li>IDRTH(IR,2): DOF number of history IR</li>
+			<li>IDRTH(IR,3): Node number of history IR</li>
+			<li>IDRTH(IR,4): Panel zone response type of history IR</li>
+			<li>IDRTH(IR,5): Beam/column/brace element of history IR</li>
+			<li>IDRTH(IR,6): Beam/column/brace element response type of history IR</li>
+		</ul>
+		<b>[14].	GPZ TAUY</b>
+		<ul>
+			<li>GPZ: Shear modulus for panel zones</li>
+			<li>TAUY: Shear yield stress for panel zones</li>
+		</ul>
+		<b>[15].	E(I) ES(I) SIGY(I) SIGU(I) EPSS(I) EPSU(I) PRAT(I) RES(I) [Repeated 2 times]</b>
+		<ul>
+			<li>E(I): Young’s modulus for material I for beam/column/brace elements</li>
+			<li>ES(I): Initial strain hardening modulus for material I for beam/column/brace elements</li>
+			<li>SIGY(I): Yield stress for material I for beam/column/brace elements</li>
+			<li>SIGU(I): Ultimate stress for material I for beam/column/brace elements</li>
+			<li>EPSS(I): Strain at onset of strain hardening for material I for beam/column/brace elements</li>
+			<li>EPSU(I): Strain at peak stress for material I for beam/column/brace elements</li>
+			<li>PRAT(I): Poisson’s ratio for material I for beam/column/brace elements</li>
+			<li>RES(I): Residual stress for material I for beam/column/brace elements</li>
+		</ul>
+		<b>[16].	E_C SIGY_C PRAT_C</b>
+		<ul>
+			<li>E_C: Young’s modulus for concrete material</li>
+			<li>SIGY_C: Yield Stress for concrete material</li>
+			<li>PRAT_C: Poisson’s ratio for concrete material</li>
+		</ul>
+		<b>[17].	ICAT ISENO IFNO FAFRAC</b>
+		<ul>
+			<li>ICAT: Element fiber area modification category (shared with fiber strain modification category)</li>
+			<li>ISEN): Segment affected</li>
+			<li>IFNO: Fibers in segment affected (filled with 0’s until 10 entries long)</li>
+			<li>FAFRAC: Percentage of area to adjust given fibers by. (e.g. 0.3 reduces selected fibers’ area to 30% of full value.)</li>
+		</ul>
+		<b>[18].	ICAT ISENO IFNO FYFRAC</b>
+		<ul>
+			<li>ICAT: Element fiber strain modification category (shared with fiber area modification category)</li>
+			<li>ISENO: Segment affected</li>
+			<li>IFNO: Fibers in segment affected (filled with 0’s until 10 entries long)</li>
+			<li>FYFRAC: Percentag of ultimate strain fiber will probabilistically reach. 10 numbers long, each number in list is given a 10% chance of occurring. (e.g. 1 1 1 10 10 100 100 100 150 150 gives elements assigned a 30% chance of only reaching 1% of ultimate strain, a 20% chance of only reaching 10% of ultimate strain, 30% chance of reaching 100% of ultimate strain and a 20% chance of reaching 150% chance of ultimate strain).</li>
+		</ul>
+		<b>[19].	IPC FRAC</b>
+		<ul>
+			<li>IPC: Number of segments for beam/column elements</li>
+			<li>FRAC: Fraction of segment length for beam/column elements</li>
+		</ul>
+		<b>[20].	IPC FRAC</b>
+		<ul>
+			<li>IPC: Number of segments for brace elements</li>
+			<li>FRAC: Fraction of segment length of brace elements</li>
+		</ul>
+		<b>[21].	GAMULT</b>
+		<ul>
+			<li>GAMULT: Ground motion multiplier</li>
+		</ul>
+		
+		
 	</div>
 	<div id="SteelInputFiles_for002" class="subgroup">
 		<h4>for002</h4>
+		<p>Contains the horizontal ground motion information to be run.</p>
 	</div>
 	<div id="SteelInputFiles_for003" class="subgroup">
 		<h4>for003</h4>
+		<p>Contains the vertical ground motion information to be run.</p>
 	</div>
 	<div id="SteelInputFiles_for020" class="subgroup">
 		<h4>for020</h4>
+		<p>Contains the cross-section dimensions for steel members. Input of the form:</p>
+		<ul>
+			<li>ISSX D TW B TF</li>
+		</ul>
+		<p>Definitions can be seen in Figure 6 1, and where ISSX is the STEEL member designator.</p>
 	</div>
 	<div id="SteelInputFiles_for021" class="subgroup">
 		<h4>for021</h4>
+		<p>Contains the cross-section for slabs. Input of the form:</p>
+		<ul>
+			<li>ICSX, ADECK, DDECK, ASLAB, DSLAB</li>
+		</ul>
+		<p>Definitions can be Figure 6 1 on page 27.</p>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/2 - ETABS Model Creation/2-7 STEEL Decking", width: "300"%>
+		
+		<p>And where ICSX is the STEEL slab designator and the user should always use 111 for columns or for elements with no slab.</p>
 	</div>
 	<div id="SteelInputFiles_for029" class="subgroup">
 		<h4>for029</h4>
+		<p>Integer seed value in * format for fiber element failure randomization. If using PBS run files this seed is randomally generated based off of processor clock at the time of analysis.</p>
 	</div>
 </section>
 
 <section id="RunningSteelOnAPBSServer" class = "group">
 	<h3>Running Steel On A PBS Server</h3>
+	<p>In the work of many researchers at Caltech it is necessary to subject a model to several thousand ground-motions. Fortunately Caltech has access to several computer clusters on campus that allow STEEL analyses to be run on multiple processors simultaneously thereby greatly decreasing the overall runtime of the analysis. As a result, several scripts were developed to expedite this process and will now be discussed to assist the user in conducting similar types of analyses. </p>
 	<div id="RunningSteelOnAPBSServer_DirectorySetup" class="subgroup">
 		<h4>Directory Setup</h4>
+		<p>The server scripts made require that the model directory be made in a specific manner. All analysis directions must contain the two server scripts (run.sh and client.sh), an input folder containing the three input files (for001, for020, and for021), and a file containing the list of ground motions the user wishes to run (ShakeOut_Files). The path to these locations should be noted as some of them will be needed in modifications to the server scripts. Additionally, the location of the folder containing the ground motions and STEEL executiable should be recorded as well.</p>
 	</div>
 	<div id="RunningSteelOnAPBSServer_ServerScripts" class="subgroup">
 		<h4>ServerScripts</h4>
+		<p>Two scripts were created to run the series of ground motions on the computer cluster here at Caltech. Run.sh is executed on the head node and its main purpose is to clean up the working directory, setup the locations of the ground motions and version of STEEL to execute, and pass execution of the job to each processor node made available to it. Prior to executing run.sh the user should modify the name of the ground acceleration folder containing the ground motions to run (GACC) and the version of steel to execute (STEEL_VER). If the user wishes to only run a particular set of motions without deleting existing results, commenting out the line “rm –rf $WORKDIR/output/*” will cause the script to not deleting existing results.</p>
+		<p>The second script, client.sh gets executed on each node made available to the process and is responsible for actually running the analysis. This script first attempts to get a ground motion to run from the list (it will do nothing if none are left), then it copies the ground motion, input files, and STEEL executable into proper position and executes the analysis. Upon completing the script compressing all the files and copies them back to the original work directory. Prior to executing the analysis the user should modify the scratch folder on the cluster (SCRATCH), the path to the ground acceleration information (GACC), and the path to the STEEL executable (STEEL). It should be noted that client.sh also is setup to append each ground motion run with hundreds of 0 entries to allow the motion to dampen out before the analysis completes. Explanation for this can be seen in [1].</p>
+		
 		<div id="RunningSteelOnAPBSServer_ServerScripts_runSH" class="subsubgroup">
 			<h5>run.sh</h5>
 		</div>
@@ -216,9 +938,21 @@
 	</div>
 	<div id="RunningSteelOnAPBSServer_SubmittingAJob" class="subgroup">
 		<h4>Submitting a Job</h4>
+		<p>To submit a job to the PBS cluster move the current directory to the model directory and type,</p>
+		$$
+			qsub –l nodes = # ./run.sh
+		$$
+		<p>Where # is the number of nodes the user wishes to utilize during analysis. The user should take care to use an appropriate number of nodes in an appropriate interval when running the analysis to allow maximum usage of the cluster.</p>
+		<p>It is also possible to receive email alerts about the jobs being run by adding the flags –m and –M to the submit job as follows,</p>
+		$$
+			qsub –l nodes=# -m abe –M somebody@something.com -M … ./run.sh
+		$$
+		<p>With this, the email addresses given will be sent alerts upon job start, job error, and job completion.</p>
+		
 	</div>
 	<div id="RunningSteelOnAPBSServer_MonitoringResults" class="subgroup">
 		<h4>Monitoring Results</h4>
+		<p>It is possible to view progress on analysis being run by first determining what nodes are currently running the job. This can be done by opening the hosts file created by run.sh and secure shelling (ssh) into that node. Moving to the scratch directory specified in client.sh will allow the user to open the for004 file and determine the state of the current analysis.<p>
 	</div>
 </section>
 
@@ -226,54 +960,86 @@
 	<h3>Sample 6 Story Model</h3>
 	<div id="Sample6StoryModel_ETABSModel" class="subgroup">
 		<h4>ETABS Model</h4>
+		<p>The building presented here as an example to represent the functionality of ETABS2Steel was designed and developed by Anthony Massari at the California Institute of Technology for a future research endeavor.  The building is an office structure located in downtown Los Angeles, and is designed per the latest codes and standards in the region.  This includes, but is not limited to, ASCE 7-10, IBC 2012, AISC 360-10, and AISC 341-10.</p>
+		<p>The buildings lateral system is a special concentrically braced frame developed using capacity based design procedures recommended in AISC 341-10.  Since the system is assumed to be of the “special” type, an underlying assumption in the modeling presented is ductile performance of all connections in the model.  Therefor the computational model focuses of “element failure” and not “connection based failure.”</p>
+		<p>The building uses a peripheral inter-story x-brace lateral system to resolve all lateral forces in the structure.  The braces used are HSS shapes, and are compliant with AISC standards for high seismicity local slenderness to prevent local buckling from occurring in the sections prior to overall element non-linear response.  As such, our focus on “element level” failure is appropriate, and STEEL provides a good platform for analyzing this type of structure.  More information will be made available about the building designs in future work presented by Massari and an isometric view of the model can be seen in  .</p.>
+		
+		<%= image_tag "Documents/Etabs2SteelManual/8 - Sample Buildingn/Fancy 3D View", width: "300"%>
+		
 	</div>
 	<div id="Sample6StoryModel_SampleE2KFile" class="subgroup">
 		<h4>Sample .e2k File</h4>
+		<p>Given here is a sample .e2k file for the 6-Story X-Brace Building and can be made available by emailing cjanover@caltech.edu.</p>
+		
+		<p>To download the sample .e2k file click <%= "here" %></p>
 	</div>
 	<div id="Sample6StoryModel_SampleEtabs2SteelConfigurationFile" class="subgroup">
 		<h4>Sample Etabs2Steel Configuration File</h4>
+		<p>Given here is a sample Etabs2Steel configuration file for the 6-Story X-Brace Building and can be made available by emailing cjanover@caltech.edu.</p>
+		
+		<p> To download the sample configuration file click <%= "here" %></p>
 	</div>
 	<div id="Sample6StoryModel_SampleSTEELInputFile" class="subgroup">
 		<h4>Sample STEEL Input File</h4>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_6StoryBaseBeams" class="subsubgroup">
 			<h5>6_Story_Base_Beams (for001)</h5>
+			<p>To Download the sample for001 file click <%= "here" %></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_HorizontalGroundAcceleration" class="subsubgroup">
 			<h5>Horizontal Ground Acceleration (for002)</h5>
+			<p>To download the sample for002 file click <%= "here" %></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_VerticalGroundAcceleration" class="subsubgroup">
 			<h5>Vertical Ground Acceleration (for003)</h5>
+			<p>To download the sample for003 file click <%= "here" %></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_6StoryBaseBeamsSections" class="subsubgroup">
 			<h5>6_Story_Base_Beams - Sections (for020)</h5>
+			<p>To download the sample for020 file click <%= "here"%></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_6StoryBaseBeamsSlabs" class="subsubgroup">
 			<h5>6_Story_Base_Beams - Slabs (for021)</h5>
+			<p>To download the sample for021 file click <%= "here"%></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_RandomSeed" class="subsubgroup">
 			<h5>Random Seed (for029)</h5>
+			<p>To download the sample for029 file click <%= "here"%></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_GridShiftConversion" class="subsubgroup">
 			<h5>Grid Shift Conversion</h5>
+			<p>To download the Grid Shift Conversion file click <%= "here"%></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_MaterialConversion" class="subsubgroup">
 			<h5>Material Conversion</h5>
+			<p>To download the Material Converison file click <%= "here"%></p>
 		</div>
 		<div id="Sample6StoryModel_SampleSTEELInputFile_SectionConversion" class="subsubgroup">
 			<h5>Section Conversion</h5>
+			<p>To download the Section Converison file click <%= "here" %></p>
 		</div>
 	</div>
 	<div id="Sample6StoryModel_SampleSTEELOutputFile" class="subgroup">
 		<h4>Sample STEEL Output File</h4>
+		<p>To download the Sample STEEL Output File click <%= "here"%></p>
 	</div>
 </section>
 
 <section id="ChangeLog" class = "group">
 	<h3>Change Log</h3>
+	<ul>
+		<li>V1.0 – Base version of STEEL and Etabs2Steel as described in original Etabs2Steel manual.</li>
+	</ul>
 </section>
 
 <section id="WorksCited" class = "group">
 	<h3>Works Cited</h3>
+	
+	<p>[1].	Bjornsson, Arnar Bjorn. A retrofitting framework for pre-Northridge steel moment-frame buildings. Dissertation (Ph.D.). California Institute of Technology. Pasadena: California Institute of Technology, 2014.</p></p>
+	<p>[2].	Chopra, Anil K. Dynamics of Structures: Theory and Applications to Earthquake Engineering. Upper Saddle River: Pearson Prentice hall, 2007.</p>
+	<p>[3].	Hall, John F. Problems Encountered from the Use (or Misuse) of Rayleigh Damping. California Institute of Technology. Denver: U.S Department of the Interior, 2007.</p>
+	<p>[4].	—. Seismic Response of Steel Frame Buildings to Near-Source Ground Motions. California Institute of Technology. Pasadena, 1997.</p>
+	<p>[5].	Massari, Anthony. "Personal Notes of Anthony Massari on STEEL Special Column Damping." Pasadena, 2014.</p>
+	<p>[6].	Uniform Building Code. International Council of Building Officials. Whittier, 1997.</p>
 </section>
 
 </div>

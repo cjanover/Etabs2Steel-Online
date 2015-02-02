@@ -1,3 +1,34 @@
 // Place all the styles related to the main controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.jumbotron{
+	background-color: rgb(150,150,150);
+}
+
+#main-index-slider-primary{
+	background-color: grey;
+	padding: 10px;
+}
+#main-slider-container{
+	background-color: black;
+}
+
+#main_img_slider {
+	display: block;
+	margin: 0px auto;
+}
+
+#main-slider-text-prev {
+	text-align: center;
+	color: white;
+}
+
+#main-slider-text-counter {
+	text-align: center;
+	color: white;
+}
+#main-slider-text-next {
+	text-align: center;
+	color: white;
+}
