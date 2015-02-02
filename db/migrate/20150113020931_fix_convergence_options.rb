@@ -1,15 +1,15 @@
 class FixConvergenceOptions < ActiveRecord::Migration
   def change
-    remove_column :Convergence_Options, :eec
-    remove_column :Convergence_Options, :nsefbc
-    remove_column :Convergence_Options, :nsefbr
-    remove_column :Convergence_Options, :milf
-    add_column :Convergence_Options, :mig, :integer
-    add_column :Convergence_Options, :tol1, :float
-    add_column :Convergence_Options, :tol3, :float
-    add_column :Convergence_Options, :tol5, :float
-    add_column :Convergence_Options, :tol7, :float
-    add_column :Convergence_Options, :alphac, :float
-    add_column :Convergence_Options, :a3, :float
+    remove_column :convergence_options, :eec
+    remove_column :convergence_options, :nsefbc
+    remove_column :convergence_options, :nsefbr
+    remove_column :convergence_options, :milf
+    add_column :convergence_options, :mig, :integer
+    add_column :convergence_options, :tol1, :float
+    add_column :convergence_options, :tol3, :float
+    add_column :convergence_options, :tol5, :float
+    add_column :convergence_options, :tol7, :float
+    add_column :convergence_options, :alphac, :float
+    add_column :convergence_options, :a3, :float
   end
 end

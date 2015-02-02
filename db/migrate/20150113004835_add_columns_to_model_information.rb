@@ -1,7 +1,7 @@
 class AddColumnsToModelInformation < ActiveRecord::Migration
   def change
-    add_column :Model_Informations, :title, :string
-    add_column :Model_Informations, :primaryetabsdir, :string
-    add_column :Model_Informations, :steelsection, :string
+    add_column :model_informations, :title, :string
+    add_column :model_informations, :primaryetabsdir, :string
+    add_column :model_informations, :steelsection, :string
   end
 end

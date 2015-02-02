@@ -1,6 +1,6 @@
 class AddDefaultAndUserIdToOptions < ActiveRecord::Migration
   def change
-    add_column :Vertical_Constraint_Options, :user_id, :integer
-    add_column :Vertical_Constraint_Options, :alphavcdef, :float
+    add_column :vertical_constraint_options, :user_id, :integer
+    add_column :vertical_constraint_options, :alphavcdef, :float
   end
 end

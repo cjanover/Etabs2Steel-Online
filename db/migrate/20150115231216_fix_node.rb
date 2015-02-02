@@ -1,9 +1,9 @@
 class FixNode < ActiveRecord::Migration
   def change
-    remove_column :Nodes, :X
-    remove_column :Nodes, :Y
-    remove_column :Nodes, :Z
-    add_column :Nodes, :point_name, :string
-    add_column :Nodes, :floor_name, :string
+    remove_column :nodes, :X
+    remove_column :nodes, :Y
+    remove_column :nodes, :Z
+    add_column :nodes, :point_name, :string
+    add_column :nodes, :floor_name, :string
   end
 end
