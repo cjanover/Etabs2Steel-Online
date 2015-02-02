@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150124090404) do
+ActiveRecord::Schema.define(version: 20150202073952) do
 
   create_table "Nodes", force: :cascade do |t|
     t.integer  "model_id"
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 20150124090404) do
   create_table "analysis_options", force: :cascade do |t|
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
-    t.boolean  "panel_zone_rigidity"
+    t.integer  "panel_zone_rigidity"
     t.integer  "mtp"
     t.integer  "nss"
     t.float    "beta"

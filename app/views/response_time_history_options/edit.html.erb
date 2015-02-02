@@ -14,11 +14,17 @@
 			<%= form_for @response_time_history_option do |f| %>				
 				<div>
 					<%= f.label "Plot Response of all Primary Nodes (PlotAll):" %>
-					<%= f.text_field :plotall %>
+					<select name="response_time_history_option[plotall]">						
+						<option value=true <%=  @response_time_history_option.plotall ? "selected" : ''%>>True</option>
+						<option value=fals <%=  !@response_time_history_option.plotall ? "selected" : ''%>>False</option>
+					</select>
 				</div>
 				<div>
 					<%= f.label "Plot Response of all Secondary Nodes (PlotSecondary):" %>
-					<%= f.text_field :plotsecondary %>
+					<select name="response_time_history_option[plotsecondary]">
+						<option value=true <%=  @response_time_history_option.plotsecondary ? "selected" : ''%>>True</option>
+						<option value=false <%=  !@response_time_history_option.plotsecondary ? "selected" : ''%>>False</option>
+					</select>
 				</div>
 
 				<% if params[:analysis_id] != nil %>

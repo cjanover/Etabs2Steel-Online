@@ -18,11 +18,19 @@
 				</div> 
 				<div>
 					<%= f.label "Primary ETABS Direction:" %>
-					<%= f.text_field :primaryetabsdir %>
+					
+					<select name="model_information[primaryetabsdir]">
+						<option <%=  @model_information.primaryetabsdir=='X' ? "selected" : ''%> >X</option>
+						<option <%=  @model_information.primaryetabsdir=='Y' ? "selected" : ''%> >Y</option>
+						<option <%=  @model_information.primaryetabsdir=='Z' ? "selected" : ''%> >Z</option>
+					</select>
+		
 				</div>
 				<div>
 					<%= f.label "ETABS Steel Section Database:" %>
-					<%= f.text_field :steelsection %>
+					<select name="model_information[steelsection]">
+						<option<%=  @model_information.primaryetabsdir=="AISC14.xml" ? "selected" : ''%> >AISC14.xml
+					</select>
 				</div>
 				
 				<% if params[:analysis_id] != nil %>

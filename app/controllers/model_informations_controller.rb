@@ -17,6 +17,7 @@ class ModelInformationsController < ApplicationController
   
   def update
     @model_information = current_default.model_information
+
     if @model_information.update(model_information_params)
 
       if (params[:analysis_id] == nil)

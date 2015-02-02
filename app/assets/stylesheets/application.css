@@ -83,6 +83,10 @@ body {
   background-color: #428bca;
 }
 
+.navbar .nav > li {
+	z-index: 1001;
+}
+
 
 /*
  * Main content
